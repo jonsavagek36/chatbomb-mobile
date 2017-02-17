@@ -16,7 +16,9 @@ class Topbar extends Component {
         <div className='bar3'></div>
         <div className='bar4'></div>
         <div className='bar5'>
-          <ButtonGroup />
+          <ButtonGroup
+            changeView={this.props.changeView}
+              />
         </div>
       </div>
     );

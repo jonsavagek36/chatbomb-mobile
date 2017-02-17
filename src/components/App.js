@@ -6,14 +6,25 @@ import Body from './body/Body';
 class App extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      view: ''
+    };
+    this.changeView = this.changeView.bind(this);
+  }
+
+  changeView(newView) {
+    this.setState({ view: newView });
   }
 
   render() {
     return (
       <div>
-        <Topbar />
-        <Body />
+        <Topbar
+          changeView={this.changeView}
+            />
+        <Body
+          view={this.state.view}
+            />
       </div>
     );
   }
