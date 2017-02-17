@@ -93,3 +93,10 @@ body {
   overflow-x: hidden;
   overflow-y: scroll;
 }
+
+.viewheader {
+  padding: 5px 5px;
+  font-size: 32px;
+  border-bottom: #000000 outset 2px;
+  border-bottom-width: 70%;
+}

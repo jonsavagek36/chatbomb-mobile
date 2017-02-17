@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
 
+import SendRequest from './SendRequest';
+import PendingRequests from './PendingRequests';
+
 class Requests extends Component {
   constructor(props) {
     super(props);
@@ -9,7 +12,11 @@ class Requests extends Component {
   render() {
     return (
       <div>
-        Requests
+        <div className='viewheader'>
+          Requests
+        </div>
+        <SendRequest />
+        <PendingRequests />
       </div>
     );
   }

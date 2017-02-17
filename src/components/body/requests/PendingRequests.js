@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 
-import EnterForm from './EnterForm';
-
-class Settings extends Component {
+class PendingRequests extends Component {
   constructor(props) {
     super(props);
     this.state = {};
@@ -11,13 +9,14 @@ class Settings extends Component {
   render() {
     return (
       <div>
-        <div className='viewheader'>
-          Settings
+        <div id='requestheader'>
+          Pending Requests
         </div>
-        <EnterForm />
+        <div id='pendingrequests'>
+        </div>
       </div>
     );
   }
 }
 
-export default Settings;
+export default PendingRequests;
