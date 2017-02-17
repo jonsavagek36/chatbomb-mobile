@@ -59,3 +59,37 @@ body {
   background-color: #FF0000;
   color: #000000;
 }
+
+#appbody {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+#view {
+  width: 65%;
+  height: 634px;
+  border: #000000 solid 1px;
+}
+#friends {
+  position: relative;
+  width: 35%;
+  height: 634px;
+  border: #000000 solid 1px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#friendsheader {
+  height: 25%;
+  width: 100%;
+}
+#friendslist {
+  height: 75%;
+  width: 100%;
+  overflow-x: hidden;
+  overflow-y: scroll;
+}

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 
+import Friends from './friends/Friends';
 import Settings from './settings/Settings';
 import Requests from './requests/Requests';
 import Chat from './chat/Chat';
@@ -22,8 +23,11 @@ class Body extends Component {
       view = null;
     }
     return (
-      <div>
-        {view}
+      <div id='appbody'>
+        <Friends />
+        <div id='view'>
+          {view}
+        </div>
       </div>
     );
   }
