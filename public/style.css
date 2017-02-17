@@ -1,0 +1,61 @@
+
+
+body {
+  margin: 0px;
+  padding: 0px;
+  font-family: "Futura", sans-serif;
+}
+
+#topbar {
+  width: 100%;
+  height: 175px;
+}
+.bar1 {
+  background-color: #FF0000;
+  height: 5%;
+}
+.bar2 {
+  background-color: #BF0000;
+  height: 12.5%;
+}
+.bar3 {
+  background-color: #800000;
+  height: 17.5%;
+}
+.bar4 {
+  background-color: #400000;
+  height: 25%;
+}
+.bar5 {
+  background-color: #000000;
+  height: 40%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#buttongroup {
+  width: 80%;
+  height: 80%;
+  margin: auto;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+.topbutton {
+  color: #FF0000;
+  border: #FF0000 solid 3px;
+  border-radius: 40px 40px 40px 40px;
+  text-align: center;
+  height: 75%;
+  width: 30%;
+  margin: auto;
+  font-size: 27px;
+  cursor: pointer;
+}
+.topbutton:hover {
+  background-color: #FF0000;
+  color: #000000;
+}
