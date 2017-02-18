@@ -16324,32 +16324,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 var socket = _socket2.default.connect('http://localhost:5000');
 
-var tester_one = {
-  profile: {
-    id: 1,
-    screen_name: 'Jon',
-    email: 'test1@test.com'
-  },
-  friends: [2, 3]
-};
-var tester_two = {
-  profile: {
-    id: 2,
-    screen_name: 'Andrew',
-    email: 'test2@test.com'
-  },
-  friends: [1, 3]
-};
-var tester_three = {
-  profile: {
-    id: 3,
-    screen_name: 'Franco',
-    email: 'test3@test.com'
-  },
-  friends: [1, 2]
-};
-var users = [tester_one, tester_two, tester_three];
-
 var App = function (_Component) {
   _inherits(App, _Component);
 
@@ -16361,13 +16335,12 @@ var App = function (_Component) {
     _this.state = {
       view: '',
       profile: {},
-      friends: []
+      friends: [],
+      online_friends: []
     };
     // REACT BINDS
     _this.changeView = _this.changeView.bind(_this);
     // SOCKET BINDS
-    // TEST BINDS
-    _this.setUser = _this.setUser.bind(_this);
     return _this;
   }
 
@@ -16375,6 +16348,7 @@ var App = function (_Component) {
     key: 'componentDidMount',
     value: function componentDidMount() {}
     // INIT
+    // SOCKET EVENTS
 
 
     // SOCKET FUNCTIONS
@@ -16396,22 +16370,6 @@ var App = function (_Component) {
     value: function changeView(newView) {
       this.setState({ view: newView });
     }
-
-    // TEST FUNCTIONS
-
-  }, {
-    key: 'setUser',
-    value: function setUser(user) {
-      this.setState({
-        profile: user.profile,
-        friends: user.friends
-      });
-    }
-  }, {
-    key: 'startUser',
-    value: function startUser() {
-      this.chatInit();
-    }
   }, {
     key: 'render',
     value: function render() {
@@ -16419,10 +16377,7 @@ var App = function (_Component) {
         'div',
         null,
         _react2.default.createElement(_Topbar2.default, {
-          changeView: this.changeView,
-          setUser: this.setUser,
-          users: users,
-          startUser: this.startUser
+          changeView: this.changeView
         }),
         _react2.default.createElement(_Body2.default, {
           view: this.state.view
@@ -17419,6 +17374,21 @@ var SendRequest = function (_Component) {
         _react2.default.createElement(
           'div',
           { className: 'formrow' },
+          'Invite a friend!'
+        ),
+        _react2.default.createElement(
+          'div',
+          { className: 'formrow' },
+          _react2.default.createElement('input', { type: 'text', id: 'invitefriend' }),
+          _react2.default.createElement(
+            'button',
+            { className: 'formbtn' },
+            'send invite'
+          )
+        ),
+        _react2.default.createElement(
+          'div',
+          { className: 'formrow' },
           'Send a Friend Request'
         ),
         _react2.default.createElement(
@@ -17790,34 +17760,13 @@ var Topbar = function (_Component) {
   _createClass(Topbar, [{
     key: 'render',
     value: function render() {
-      var _this2 = this;
-
-      var testers = this.props.users.map(function (user, idx) {
-        var setUser = function setUser() {
-          _this2.props.setUser(user);
-        };
-        return _react2.default.createElement(
-          'button',
-          { onClick: setUser },
-          idx
-        );
-      });
       return _react2.default.createElement(
         'div',
         { id: 'topbar' },
         _react2.default.createElement('div', { className: 'bar1' }),
         _react2.default.createElement('div', { className: 'bar2' }),
         _react2.default.createElement('div', { className: 'bar3' }),
-        _react2.default.createElement(
-          'div',
-          { className: 'bar4' },
-          testers,
-          _react2.default.createElement(
-            'button',
-            { onClick: this.props.startUser },
-            'start'
-          )
-        ),
+        _react2.default.createElement('div', { className: 'bar4' }),
         _react2.default.createElement(
           'div',
           { className: 'bar5' },

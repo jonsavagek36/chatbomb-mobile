@@ -2,7 +2,6 @@ let mongoose = require('mongoose');
 let Schema = mongoose.Schema;
 
 let User = new Schema({
-  user_id: ObjectId,
   facebook_id: String,
   screen_name: String,
   email: String,
@@ -13,7 +12,6 @@ let User = new Schema({
 });
 
 let Invite = new Schema({
-  code: ObjectId,
   email: String,
   updated_at: Date
 });

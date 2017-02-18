@@ -15,7 +15,7 @@ exports.send_invite = function(req, res) {
   let message = `A friend invited you to Chatbomb.<br /><a href='http://localhost:5000/accept_invite?code=${req.body.code}'>Click here</a>`;
   let mailOptions = {
     to: req.body.to,
-    subject: 'You got Chatbombed'
+    subject: 'You got Chatbombed',
     html: message
   };
   smtpTransport.sendMail(mailOptions, function(err, res) {
