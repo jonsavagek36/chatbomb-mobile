@@ -12,5 +12,12 @@ let User = new Schema({
   updated_at: Date
 });
 
+let Invite = new Schema({
+  code: ObjectId,
+  email: String,
+  updated_at: Date
+});
+
 mongoose.model('User', User);
+mongoose.model('Invite', Invite);
 mongoose.connect('mongodb://localhost:27017/chatbomb_dev');
