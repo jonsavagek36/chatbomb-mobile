@@ -46,16 +46,103 @@ body {
 }
 .topbutton {
   color: #FF0000;
-  border: #FF0000 solid 3px;
-  border-radius: 40px 40px 40px 40px;
   text-align: center;
   height: 75%;
   width: 30%;
   margin: auto;
-  font-size: 27px;
+  font-size: 24px;
   cursor: pointer;
 }
 .topbutton:hover {
   background-color: #FF0000;
   color: #000000;
+}
+
+#appbody {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+#view {
+  width: 65%;
+  height: 634px;
+  border: #000000 solid 1px;
+}
+#friends {
+  position: relative;
+  width: 35%;
+  height: 634px;
+  border: #000000 solid 1px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#friendsheader {
+  height: 25%;
+  width: 100%;
+}
+#friendslist {
+  height: 75%;
+  width: 100%;
+  overflow-x: hidden;
+  overflow-y: scroll;
+}
+
+.viewheader {
+  padding: 5px 5px;
+  font-size: 32px;
+  border-bottom: #000000 outset 2px;
+  border-bottom-width: 70%;
+}
+
+.content {
+  position: relative;
+  top: 20px;
+  left: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+.formrow {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  position: relative;
+  height: 40px;
+}
+.new {
+  display: flex;
+  position: relative;
+  justify-content: flex-start;
+  left: 0px;
+  width: 200px;
+}
+.old {
+  display: flex;
+  position: relative;
+  justify-content: flex-start;
+}
+input {
+  border: #000000 solid 1px;
+}
+button {
+  border: #000000 solid 1px;
+}
+
+#pendingrequests {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  width: 300px;
+  height: 400px;
+  border: #000000 solid 1px;
 }

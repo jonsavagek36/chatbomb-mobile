@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-class Button extends Component {
+class Nameplate extends Component {
   constructor(props) {
     super(props);
     this.state = {};
@@ -8,11 +8,10 @@ class Button extends Component {
 
   render() {
     return (
-      <div className='topbutton' onClick={this.props.changeView}>
-        {this.props.name}
+      <div>
       </div>
     );
   }
 }
 
-export default Button;
+export default Nameplate;
