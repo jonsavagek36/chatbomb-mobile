@@ -10,6 +10,13 @@ class SendRequest extends Component {
     return (
       <div id='sendrequest'>
         <div className='formrow'>
+          Invite a friend!
+        </div>
+        <div className='formrow'>
+          <input type='text' id='invitefriend' />
+          <button className='formbtn'>send invite</button>
+        </div>
+        <div className='formrow'>
           Send a Friend Request
         </div>
         <div className='formrow'>
