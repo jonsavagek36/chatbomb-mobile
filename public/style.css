@@ -82,14 +82,23 @@ body {
 }
 
 #friendsheader {
-  height: 25%;
+  height: 15%;
   width: 100%;
+  border: #000000 solid 1px;
 }
 #friendslist {
-  height: 75%;
+  height: 85%;
   width: 100%;
   overflow-x: hidden;
   overflow-y: scroll;
+  border: #000000 solid 1px;
+}
+.nameplate {
+  position: relative;
+  height: 50px;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  border: #000000 solid 1px;
 }
 
 .viewheader {
