@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
+import io from 'socket.io-client';
 
 import Topbar from './topbar/Topbar';
 import Body from './body/Body';
+
+let socket = io.connect(`http://localhost:5000`);
 
 class App extends Component {
   constructor(props) {
@@ -9,7 +12,13 @@ class App extends Component {
     this.state = {
       view: ''
     };
+    // REACT BINDS
     this.changeView = this.changeView.bind(this);
+    // SOCKET BINDS
+  }
+
+  componentDidMount() {
+    // INIT
   }
 
   changeView(newView) {
