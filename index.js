@@ -40,7 +40,7 @@ app.get('/send_invite', function(req, res) {
   });
 });
 app.get('/accept_invite', function(req, res) {
-  // Take user to Setup page
+
 });
 
 http.createServer(app).listen(port);

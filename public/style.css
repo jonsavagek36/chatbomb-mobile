@@ -5,6 +5,13 @@ body {
   padding: 0px;
   font-family: "Futura", sans-serif;
 }
+.centerdiv {
+  position: relative;
+  top: 100px;
+  left: 100px;
+  width: 400px;
+  height: 500px;
+}
 
 #topbar {
   width: 100%;
