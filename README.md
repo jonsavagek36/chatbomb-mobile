@@ -1,4 +1,6 @@
 # chatbomb2
+Note: Apparently 'Chatbomb' has already been taken as an app name (so weak), so I'll be changing the name.
+
 Revamped version of Chatbomb that utilizes MongoDB
 
 Still in progress, but what I'm currently implementing:
