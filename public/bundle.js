@@ -13368,7 +13368,13 @@ var List = function (_Component) {
   _createClass(List, [{
     key: 'render',
     value: function render() {
-      return _react2.default.createElement('div', { id: 'friendslist' });
+      return _react2.default.createElement(
+        'div',
+        { id: 'friendslist' },
+        _react2.default.createElement(_Nameplate2.default, null),
+        _react2.default.createElement(_Nameplate2.default, null),
+        _react2.default.createElement(_Nameplate2.default, null)
+      );
     }
   }]);
 
@@ -13417,7 +13423,7 @@ var Nameplate = function (_Component) {
   _createClass(Nameplate, [{
     key: 'render',
     value: function render() {
-      return _react2.default.createElement('div', null);
+      return _react2.default.createElement('div', { className: 'nameplate' });
     }
   }]);
 

@@ -11,6 +11,9 @@ class List extends Component {
   render() {
     return (
       <div id='friendslist'>
+        <Nameplate />
+        <Nameplate />
+        <Nameplate />
       </div>
     );
   }
