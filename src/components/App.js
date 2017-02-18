@@ -10,7 +10,10 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      view: ''
+      view: '',
+      profile: {},
+      friends: [],
+      online_friends: []
     };
     // REACT BINDS
     this.changeView = this.changeView.bind(this);
@@ -19,8 +22,19 @@ class App extends Component {
 
   componentDidMount() {
     // INIT
+    // SOCKET EVENTS
   }
 
+  // SOCKET FUNCTIONS
+  chatInit() {
+    let data = {
+      socket_id: socket.id,
+      user: this.state.profile
+    };
+    socket.emit('user:init', data);
+  }
+
+  // REACT FUNCTIONS
   changeView(newView) {
     this.setState({ view: newView });
   }
