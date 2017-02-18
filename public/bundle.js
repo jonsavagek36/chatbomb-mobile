@@ -13431,33 +13431,69 @@ var EnterForm = function (_Component) {
         { id: 'enterform' },
         _react2.default.createElement(
           'div',
-          { className: 'new' },
-          _react2.default.createElement('input', { type: 'text', id: 'new-name' }),
+          { className: 'formrow' },
           _react2.default.createElement(
-            'button',
-            { className: 'formbtn' },
-            'submit'
+            'div',
+            { className: 'new' },
+            'New Screen Name'
+          ),
+          _react2.default.createElement(
+            'div',
+            { className: 'old' },
+            'Current Screen Name'
           )
         ),
         _react2.default.createElement(
           'div',
-          { className: 'old' },
-          'Rick'
-        ),
-        _react2.default.createElement(
-          'div',
-          { className: 'new' },
-          _react2.default.createElement('input', { type: 'text', id: 'new-email' }),
+          { className: 'formrow' },
           _react2.default.createElement(
-            'button',
-            { className: 'formbtn' },
-            'submit'
+            'div',
+            { className: 'new' },
+            _react2.default.createElement('input', { type: 'text', id: 'new-name' }),
+            _react2.default.createElement(
+              'button',
+              { className: 'formbtn' },
+              'submit'
+            )
+          ),
+          _react2.default.createElement(
+            'div',
+            { className: 'old' },
+            'Rick'
           )
         ),
         _react2.default.createElement(
           'div',
-          { className: 'old' },
-          'Morty'
+          { className: 'formrow' },
+          _react2.default.createElement(
+            'div',
+            { className: 'new' },
+            'New E-Mail'
+          ),
+          _react2.default.createElement(
+            'div',
+            { className: 'old' },
+            'Current E-Mail'
+          )
+        ),
+        _react2.default.createElement(
+          'div',
+          { className: 'formrow' },
+          _react2.default.createElement(
+            'div',
+            { className: 'new' },
+            _react2.default.createElement('input', { type: 'text', id: 'new-email' }),
+            _react2.default.createElement(
+              'button',
+              { className: 'formbtn' },
+              'submit'
+            )
+          ),
+          _react2.default.createElement(
+            'div',
+            { className: 'old' },
+            'Morty'
+          )
         )
       );
     }
