@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 
-import Box from './Box';
-
-class Chat extends Component {
+class LiveText extends Component {
   constructor(props) {
     super(props);
     this.state = {};
@@ -10,11 +8,10 @@ class Chat extends Component {
 
   render() {
     return (
-      <div>
-        <Box />
+      <div className='livetext' id='live'>
       </div>
     );
   }
 }
 
-export default Chat;
+export default LiveText;
