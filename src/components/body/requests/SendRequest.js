@@ -9,10 +9,10 @@ class SendRequest extends Component {
   render() {
     return (
       <div id='sendrequest'>
-        <div id='requestheader'>
+        <div className='formrow'>
           Send a Friend Request
         </div>
-        <div id='sendrequestform'>
+        <div className='formrow'>
           <input type='text' id='requestform' />
           <button className='formbtn'>send request</button>
         </div>

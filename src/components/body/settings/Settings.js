@@ -8,13 +8,15 @@ class Settings extends Component {
     this.state = {};
   }
 
-  render() { 
+  render() {
     return (
       <div>
         <div className='viewheader'>
           Settings
         </div>
-        <EnterForm />
+        <div className='content'>
+          <EnterForm />
+        </div>
       </div>
     );
   }

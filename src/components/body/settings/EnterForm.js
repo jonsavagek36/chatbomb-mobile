@@ -8,7 +8,7 @@ class EnterForm extends Component {
 
   render() {
     return (
-      <div id='enterform'>
+      <div>
         <div className='formrow'>
           <div className='new'>
             New Screen Name

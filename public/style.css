@@ -99,10 +99,10 @@ body {
   border-bottom-width: 70%;
 }
 
-#enterform {
+.content {
   position: relative;
   top: 20px;
-  left: 5px;
+  left: 10px;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -131,5 +131,18 @@ input {
   border: #000000 solid 1px;
 }
 button {
+  border: #000000 solid 1px;
+}
+
+#pendingrequests {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  width: 300px;
+  height: 400px;
   border: #000000 solid 1px;
 }

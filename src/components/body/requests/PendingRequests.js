@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 
+import NewRequest from './NewRequest';
+
 class PendingRequests extends Component {
   constructor(props) {
     super(props);
@@ -9,7 +11,7 @@ class PendingRequests extends Component {
   render() {
     return (
       <div>
-        <div id='requestheader'>
+        <div className='formrow'>
           Pending Requests
         </div>
         <div id='pendingrequests'>

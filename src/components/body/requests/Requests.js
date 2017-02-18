@@ -15,8 +15,10 @@ class Requests extends Component {
         <div className='viewheader'>
           Requests
         </div>
-        <SendRequest />
-        <PendingRequests />
+        <div className='content'>
+          <SendRequest />
+          <PendingRequests />
+        </div>
       </div>
     );
   }
