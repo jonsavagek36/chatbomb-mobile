@@ -1,7 +1,7 @@
 let io;
 
-export.init = function(sio, socket) {
+exports.init = function(sio, socket) {
   let io = sio;
 
-   
+
 }
