@@ -17,8 +17,8 @@ class Body extends Component {
       view = <Settings />;
     } else if (this.props.view == 'Requests') {
       view = <Requests />;
-    } else if (this.props.view == 'Chat') {
-      view = <Chat />;
+    } else if (this.props.view == 'Chat' && this.props.selectedFriend !== null) {
+      view = <Chat selectedFriend={this.props.selectedFriend} sendMessage={this.props.sendMessage} conversationView={this.props.conversationView} />;
     } else {
       view = null;
     }

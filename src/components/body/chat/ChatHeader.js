@@ -9,6 +9,7 @@ class ChatHeader extends Component {
   render() {
     return (
       <div className='chatheader'>
+        {this.props.selectedFriend.screen_name}
       </div>
     );
   }

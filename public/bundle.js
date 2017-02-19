@@ -12745,7 +12745,8 @@ var App = function (_Component) {
       friends: [],
       online_friends: [],
       refreshId: '',
-      selectedFriend: {}
+      selectedFriend: {},
+      conversations: {}
     };
     // REACT BINDS
     _this.changeView = _this.changeView.bind(_this);
@@ -12754,6 +12755,8 @@ var App = function (_Component) {
     _this.chatInit = _this.chatInit.bind(_this);
     _this.refreshRequest = _this.refreshRequest.bind(_this);
     _this.refreshFriends = _this.refreshFriends.bind(_this);
+    _this.sendMessage = _this.sendMessage.bind(_this);
+    _this.receiveMessage = _this.receiveMessage.bind(_this);
     // TEST BINDS
     _this.userOne = _this.userOne.bind(_this);
     _this.userTwo = _this.userTwo.bind(_this);
@@ -12769,6 +12772,7 @@ var App = function (_Component) {
       // SOCKET EVENTS
       socket.on('test', this.testSock);
       socket.on('friends:refreshed', this.refreshFriends);
+      socket.on('receive:message', this.receiveMessage);
     }
 
     // SOCKET FUNCTIONS
@@ -12798,6 +12802,52 @@ var App = function (_Component) {
     key: 'refreshFriends',
     value: function refreshFriends(data) {
       this.setState({ online_friends: data.online_friends });
+    }
+  }, {
+    key: 'sendMessage',
+    value: function sendMessage() {
+      var me = this.state.profile;
+      var target = this.state.selectedFriend;
+      var convos = this.state.conversations;
+      var convoCode = target.id;
+      var textNode = document.getElementById('sendmsg');
+      var message = {
+        sender_id: me.id,
+        target_id: target.id,
+        sender_name: me.screen_name,
+        target_name: target.screen_name,
+        msg: textNode.value
+      };
+      if (convos[convoCode] == undefined) {
+        convos[convoCode] = [];
+      }
+      var last = convos[convoCode].length - 1;
+      if (last > -1) {
+        if (convos[convoCode][last].sender_id != me.id) {
+          convos[convoCode].push(message);
+          socket.emit('send:message', message);
+        }
+      } else {
+        convos[convoCode].push(message);
+        socket.emit('send:message', message);
+      }
+      textNode.value = '';
+    }
+  }, {
+    key: 'receiveMessage',
+    value: function receiveMessage(data) {
+      var me = this.state.profile;
+      var convos = this.state.conversations;
+      var convoCode = data.sender_id;
+      if (convos[convoCode] == undefined) {
+        convos[convoCode] = [];
+      }
+      convos[convoCode].push(data);
+      me.points += 1;
+      this.setState({
+        conversations: convos,
+        profile: me
+      });
     }
 
     // REACT FUNCTIONS
@@ -12847,6 +12897,10 @@ var App = function (_Component) {
   }, {
     key: 'render',
     value: function render() {
+      var conversationView = null;
+      if (this.state.selectedFriend !== undefined) {
+        conversationView = this.state.conversations[this.state.selectedFriend.id];
+      }
       return _react2.default.createElement(
         'div',
         null,
@@ -12862,7 +12916,9 @@ var App = function (_Component) {
           profile: this.state.profile,
           online_friends: this.state.online_friends,
           selectFriend: this.selectFriend,
-          selectedFriend: this.state.selectedFriend
+          selectedFriend: this.state.selectedFriend,
+          sendMessage: this.sendMessage,
+          conversationView: conversationView
         })
       );
     }
@@ -12979,8 +13035,8 @@ var Body = function (_Component) {
         view = _react2.default.createElement(_Settings2.default, null);
       } else if (this.props.view == 'Requests') {
         view = _react2.default.createElement(_Requests2.default, null);
-      } else if (this.props.view == 'Chat') {
-        view = _react2.default.createElement(_Chat2.default, null);
+      } else if (this.props.view == 'Chat' && this.props.selectedFriend !== null) {
+        view = _react2.default.createElement(_Chat2.default, { selectedFriend: this.props.selectedFriend, sendMessage: this.props.sendMessage, conversationView: this.props.conversationView });
       } else {
         view = null;
       }
@@ -13066,10 +13122,14 @@ var Box = function (_Component) {
       return _react2.default.createElement(
         'div',
         { className: 'chatbox' },
-        _react2.default.createElement(_ChatHeader2.default, null),
-        _react2.default.createElement(_ChatBody2.default, null),
+        _react2.default.createElement(_ChatHeader2.default, { selectedFriend: this.props.selectedFriend }),
+        _react2.default.createElement(_ChatBody2.default, {
+          conversationView: this.props.conversationView
+        }),
         _react2.default.createElement(_LiveText2.default, null),
-        _react2.default.createElement(_SendText2.default, null)
+        _react2.default.createElement(_SendText2.default, {
+          sendMessage: this.props.sendMessage
+        })
       );
     }
   }]);
@@ -13126,7 +13186,11 @@ var Chat = function (_Component) {
       return _react2.default.createElement(
         'div',
         null,
-        _react2.default.createElement(_Box2.default, null)
+        _react2.default.createElement(_Box2.default, {
+          selectedFriend: this.props.selectedFriend,
+          sendMessage: this.props.sendMessage,
+          conversationView: this.props.conversationView
+        })
       );
     }
   }]);
@@ -13176,7 +13240,27 @@ var ChatBody = function (_Component) {
   _createClass(ChatBody, [{
     key: 'render',
     value: function render() {
-      return _react2.default.createElement('div', { className: 'chatbody' });
+      var conversation = null;
+      if (this.props.conversationView !== undefined) {
+        conversation = this.props.conversationView.map(function (message, idx) {
+          return _react2.default.createElement(
+            'li',
+            { key: idx },
+            message.sender_name,
+            ': ',
+            message.msg
+          );
+        });
+      }
+      return _react2.default.createElement(
+        'div',
+        { className: 'chatbody' },
+        _react2.default.createElement(
+          'ul',
+          { className: 'nobullets' },
+          conversation
+        )
+      );
     }
   }]);
 
@@ -13225,7 +13309,11 @@ var ChatHeader = function (_Component) {
   _createClass(ChatHeader, [{
     key: 'render',
     value: function render() {
-      return _react2.default.createElement('div', { className: 'chatheader' });
+      return _react2.default.createElement(
+        'div',
+        { className: 'chatheader' },
+        this.props.selectedFriend.screen_name
+      );
     }
   }]);
 
@@ -13332,7 +13420,7 @@ var SendText = function (_Component) {
           _react2.default.createElement('input', { type: 'text', id: 'sendmsg', style: { width: 301 } }),
           _react2.default.createElement(
             'button',
-            null,
+            { onClick: this.props.sendMessage },
             'send'
           )
         )
@@ -13456,7 +13544,9 @@ var Header = function (_Component) {
       return _react2.default.createElement(
         'div',
         { id: 'friendsheader' },
-        this.props.profile.screen_name
+        this.props.profile.screen_name,
+        'points: ',
+        this.props.profile.points
       );
     }
   }]);

@@ -14,10 +14,14 @@ class Box extends Component {
   render() {
     return (
       <div className='chatbox'>
-        <ChatHeader />
-        <ChatBody />
+        <ChatHeader selectedFriend={this.props.selectedFriend} />
+        <ChatBody
+          conversationView={this.props.conversationView}
+            />
         <LiveText />
-        <SendText />
+        <SendText
+          sendMessage={this.props.sendMessage}
+            />
       </div>
     );
   }

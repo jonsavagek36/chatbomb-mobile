@@ -21,7 +21,8 @@ class App extends Component {
       friends: [],
       online_friends: [],
       refreshId: '',
-      selectedFriend: {}
+      selectedFriend: {},
+      conversations: {}
     };
     // REACT BINDS
     this.changeView = this.changeView.bind(this);
@@ -30,6 +31,8 @@ class App extends Component {
     this.chatInit = this.chatInit.bind(this);
     this.refreshRequest = this.refreshRequest.bind(this);
     this.refreshFriends = this.refreshFriends.bind(this);
+    this.sendMessage = this.sendMessage.bind(this);
+    this.receiveMessage = this.receiveMessage.bind(this);
     // TEST BINDS
     this.userOne = this.userOne.bind(this);
     this.userTwo = this.userTwo.bind(this);
@@ -42,6 +45,7 @@ class App extends Component {
     // SOCKET EVENTS
     socket.on('test', this.testSock);
     socket.on('friends:refreshed', this.refreshFriends);
+    socket.on('receive:message', this.receiveMessage);
   }
 
   // SOCKET FUNCTIONS
@@ -65,6 +69,50 @@ class App extends Component {
 
   refreshFriends(data) {
     this.setState({ online_friends: data.online_friends });
+  }
+
+  sendMessage() {
+    let me = this.state.profile;
+    let target = this.state.selectedFriend;
+    let convos = this.state.conversations;
+    let convoCode = target.id;
+    let textNode = document.getElementById('sendmsg');
+    let message = {
+      sender_id: me.id,
+      target_id: target.id,
+      sender_name: me.screen_name,
+      target_name: target.screen_name,
+      msg: textNode.value
+    };
+    if (convos[convoCode] == undefined) {
+      convos[convoCode] = [];
+    }
+    let last = convos[convoCode].length - 1;
+    if (last > -1) {
+      if (convos[convoCode][last].sender_id != me.id) {
+        convos[convoCode].push(message);
+        socket.emit('send:message', message);
+      }
+    } else {
+      convos[convoCode].push(message);
+      socket.emit('send:message', message);
+    }
+    textNode.value = '';
+  }
+
+  receiveMessage(data) {
+    let me = this.state.profile;
+    let convos = this.state.conversations;
+    let convoCode = data.sender_id;
+    if (convos[convoCode] == undefined) {
+      convos[convoCode] = [];
+    }
+    convos[convoCode].push(data);
+    me.points += 1;
+    this.setState({
+      conversations: convos,
+      profile: me
+    });
   }
 
   // REACT FUNCTIONS
@@ -100,6 +148,10 @@ class App extends Component {
   }
 
   render() {
+    let conversationView = null;
+    if (this.state.selectedFriend !== undefined) {
+      conversationView = this.state.conversations[this.state.selectedFriend.id];
+    }
     return (
       <div>
         <Topbar
@@ -115,6 +167,8 @@ class App extends Component {
           online_friends={this.state.online_friends}
           selectFriend={this.selectFriend}
           selectedFriend={this.state.selectedFriend}
+          sendMessage={this.sendMessage}
+          conversationView={conversationView}
             />
       </div>
     );

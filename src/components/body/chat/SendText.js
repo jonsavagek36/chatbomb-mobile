@@ -11,7 +11,7 @@ class SendText extends Component {
       <div className='sendtext'>
         <div className='formrow'>
           <input type='text' id='sendmsg' style={{width:301}} />
-          <button>send</button>
+          <button onClick={this.props.sendMessage}>send</button>
         </div>
       </div>
     );

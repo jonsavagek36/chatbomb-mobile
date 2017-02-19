@@ -209,3 +209,6 @@ button {
   height: 25px;
   border: #000000 solid 1px;
 }
+.nobullets {
+  list-style-type: none;
+}

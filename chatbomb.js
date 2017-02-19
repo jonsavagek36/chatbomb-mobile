@@ -20,6 +20,11 @@ exports.init = function(sio, socket) {
     socket.emit('friends:refreshed', { online_friends: on_friends });
   });
 
+  socket.on('send:message', function(data) {
+    let target_sock = clients[data.target_id];
+    io.to(target_sock).emit('receive:message', data);
+  });
+
   socket.once('disconnect', function() {
     let userId = getKey(socket.id, clients);
     delete clients[userId];
