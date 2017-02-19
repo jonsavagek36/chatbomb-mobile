@@ -12748,10 +12748,12 @@ var App = function (_Component) {
     // REACT BINDS
     _this.changeView = _this.changeView.bind(_this);
     // SOCKET BINDS
+    _this.chatInit = _this.chatInit.bind(_this);
     // TEST BINDS
     _this.userOne = _this.userOne.bind(_this);
     _this.userTwo = _this.userTwo.bind(_this);
     _this.userThree = _this.userThree.bind(_this);
+    _this.startUser = _this.startUser.bind(_this);
     return _this;
   }
 
