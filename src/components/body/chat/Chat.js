@@ -17,6 +17,8 @@ class Chat extends Component {
           conversationView={this.props.conversationView}
           sendLive={this.props.sendLive}
           liveChat={this.props.liveChat}
+          live_messages={this.props.live_messages}
+          removeLiveMessage={this.props.removeLiveMessage}
             />
       </div>
     );

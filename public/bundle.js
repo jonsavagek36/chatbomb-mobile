@@ -12747,11 +12747,13 @@ var App = function (_Component) {
       refreshId: '',
       selectedFriend: {},
       conversations: {},
-      liveChat: ''
+      liveChat: '',
+      live_messages: []
     };
     // REACT BINDS
     _this.changeView = _this.changeView.bind(_this);
     _this.selectFriend = _this.selectFriend.bind(_this);
+    _this.removeLiveMessage = _this.removeLiveMessage.bind(_this);
     // SOCKET BINDS
     _this.chatInit = _this.chatInit.bind(_this);
     _this.refreshRequest = _this.refreshRequest.bind(_this);
@@ -12760,6 +12762,7 @@ var App = function (_Component) {
     _this.receiveMessage = _this.receiveMessage.bind(_this);
     _this.sendLive = _this.sendLive.bind(_this);
     _this.receiveLive = _this.receiveLive.bind(_this);
+    _this.bombChat = _this.bombChat.bind(_this);
     // TEST BINDS
     _this.userOne = _this.userOne.bind(_this);
     _this.userTwo = _this.userTwo.bind(_this);
@@ -12777,6 +12780,7 @@ var App = function (_Component) {
       socket.on('friends:refreshed', this.refreshFriends);
       socket.on('receive:message', this.receiveMessage);
       socket.on('receive:live', this.receiveLive);
+      socket.on('bomb:chat', this.bombChat);
     }
 
     // SOCKET FUNCTIONS
@@ -12794,7 +12798,7 @@ var App = function (_Component) {
         user: this.state.profile
       };
       socket.emit('user:init', data);
-      var id = setInterval(this.refreshRequest, 2500);
+      var id = setInterval(this.refreshRequest, 1000);
       this.setState({ refreshId: id });
     }
   }, {
@@ -12836,6 +12840,9 @@ var App = function (_Component) {
         socket.emit('send:message', message);
       }
       textNode.value = '';
+      if (this.state.live_messages.indexOf(target.id) > -1) {
+        this.removeLiveMessage(false);
+      }
     }
   }, {
     key: 'receiveMessage',
@@ -12848,9 +12855,13 @@ var App = function (_Component) {
       }
       convos[convoCode].push(data);
       me.points += 1;
+      var liveMsg = this.state.live_messages;
+      liveMsg.push(data.sender_id);
       this.setState({
         conversations: convos,
-        profile: me
+        profile: me,
+        liveChat: '',
+        live_messages: liveMsg
       });
     }
   }, {
@@ -12873,6 +12884,24 @@ var App = function (_Component) {
         this.setState({ liveChat: data.live_update });
       }
     }
+  }, {
+    key: 'chatBomb',
+    value: function chatBomb() {
+      var me = this.state.profile;
+      var target = this.state.selectedFriend;
+      var payload = {
+        sender_id: me.id,
+        target_id: target.id
+      };
+      socket.emit('chat:bomb', payload);
+    }
+  }, {
+    key: 'bombChat',
+    value: function bombChat(data) {
+      var convos = this.state.conversations;
+      delete convos[data.chat_id];
+      this.setState({ conversations: convos });
+    }
 
     // REACT FUNCTIONS
 
@@ -12888,6 +12917,18 @@ var App = function (_Component) {
         selectedFriend: friend,
         view: 'Chat'
       });
+    }
+  }, {
+    key: 'removeLiveMessage',
+    value: function removeLiveMessage(zero) {
+      var live_msgs = this.state.live_messages;
+      var friend_id = this.state.selectedFriend.id;
+      var idx = live_msgs.indexOf(friend_id);
+      live_msgs.splice(idx, 1);
+      this.setState({ live_messages: live_msgs });
+      if (zero) {
+        this.chatBomb();
+      }
     }
 
     // TEST FUNCTIONS
@@ -12947,7 +12988,9 @@ var App = function (_Component) {
           sendMessage: this.sendMessage,
           conversationView: conversationView,
           sendLive: this.sendLive,
-          liveChat: this.state.liveChat
+          liveChat: this.state.liveChat,
+          live_messages: this.state.live_messages,
+          removeLiveMessage: this.removeLiveMessage
         })
       );
     }
@@ -13065,7 +13108,7 @@ var Body = function (_Component) {
       } else if (this.props.view == 'Requests') {
         view = _react2.default.createElement(_Requests2.default, null);
       } else if (this.props.view == 'Chat' && this.props.selectedFriend !== null) {
-        view = _react2.default.createElement(_Chat2.default, { selectedFriend: this.props.selectedFriend, sendMessage: this.props.sendMessage, conversationView: this.props.conversationView, sendLive: this.props.sendLive, liveChat: this.props.liveChat });
+        view = _react2.default.createElement(_Chat2.default, { selectedFriend: this.props.selectedFriend, sendMessage: this.props.sendMessage, conversationView: this.props.conversationView, sendLive: this.props.sendLive, liveChat: this.props.liveChat, live_messages: this.props.live_messages, removeLiveMessage: this.props.removeLiveMessage });
       } else {
         view = null;
       }
@@ -13141,17 +13184,35 @@ var Box = function (_Component) {
 
     var _this = _possibleConstructorReturn(this, (Box.__proto__ || Object.getPrototypeOf(Box)).call(this, props));
 
-    _this.state = {};
+    _this.state = {
+      timer: null
+    };
+    _this.updateTimer = _this.updateTimer.bind(_this);
     return _this;
   }
 
   _createClass(Box, [{
+    key: 'updateTimer',
+    value: function updateTimer(time) {
+      this.setState({ timer: time });
+    }
+  }, {
     key: 'render',
     value: function render() {
+      var live = false;
+      if (this.props.live_messages.indexOf(this.props.selectedFriend.id) > -1) {
+        live = true;
+      }
       return _react2.default.createElement(
         'div',
         { className: 'chatbox' },
-        _react2.default.createElement(_ChatHeader2.default, { selectedFriend: this.props.selectedFriend }),
+        _react2.default.createElement(_ChatHeader2.default, {
+          selectedFriend: this.props.selectedFriend,
+          live: live,
+          removeLiveMessage: this.props.removeLiveMessage,
+          timer: this.state.timer,
+          updateTimer: this.updateTimer
+        }),
         _react2.default.createElement(_ChatBody2.default, {
           conversationView: this.props.conversationView
         }),
@@ -13223,7 +13284,9 @@ var Chat = function (_Component) {
           sendMessage: this.props.sendMessage,
           conversationView: this.props.conversationView,
           sendLive: this.props.sendLive,
-          liveChat: this.props.liveChat
+          liveChat: this.props.liveChat,
+          live_messages: this.props.live_messages,
+          removeLiveMessage: this.props.removeLiveMessage
         })
       );
     }
@@ -13337,16 +13400,56 @@ var ChatHeader = function (_Component) {
     var _this = _possibleConstructorReturn(this, (ChatHeader.__proto__ || Object.getPrototypeOf(ChatHeader)).call(this, props));
 
     _this.state = {};
+    _this.timerId = '';
     return _this;
   }
 
   _createClass(ChatHeader, [{
+    key: 'componentWillReceiveProps',
+    value: function componentWillReceiveProps(nextProps) {
+      if (nextProps.live && nextProps.timer == null) {
+        this.startTimer();
+      } else if (this.props.live && nextProps.live == false) {
+        this.stopTimer();
+      }
+    }
+  }, {
+    key: 'startTimer',
+    value: function startTimer() {
+      var _ = this;
+      _.props.updateTimer(30);
+      var start = Date.now();
+      var diff = void 0;
+      var seconds = void 0;
+      function timer() {
+        diff = 30 - ((Date.now() - start) / 1000 | 0);
+        seconds = diff % 60 | 0;
+        seconds = seconds < 10 ? "0" + seconds : seconds;
+        _.props.updateTimer(seconds);
+        if (seconds == 0) {
+          _.props.removeLiveMessage(true);
+        }
+        if (diff <= 0) {
+          start = Date.now() + 1000;
+        }
+      };
+      timer();
+      _.timerId = setInterval(timer, 1000);
+    }
+  }, {
+    key: 'stopTimer',
+    value: function stopTimer() {
+      clearInterval(this.timerId);
+      this.props.updateTimer(null);
+    }
+  }, {
     key: 'render',
     value: function render() {
       return _react2.default.createElement(
         'div',
         { className: 'chatheader' },
-        this.props.selectedFriend.screen_name
+        this.props.selectedFriend.screen_name,
+        this.props.timer
       );
     }
   }]);

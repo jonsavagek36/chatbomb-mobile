@@ -23,11 +23,13 @@ class App extends Component {
       refreshId: '',
       selectedFriend: {},
       conversations: {},
-      liveChat: ''
+      liveChat: '',
+      live_messages: []
     };
     // REACT BINDS
     this.changeView = this.changeView.bind(this);
     this.selectFriend = this.selectFriend.bind(this);
+    this.removeLiveMessage = this.removeLiveMessage.bind(this);
     // SOCKET BINDS
     this.chatInit = this.chatInit.bind(this);
     this.refreshRequest = this.refreshRequest.bind(this);
@@ -36,6 +38,7 @@ class App extends Component {
     this.receiveMessage = this.receiveMessage.bind(this);
     this.sendLive = this.sendLive.bind(this);
     this.receiveLive = this.receiveLive.bind(this);
+    this.bombChat = this.bombChat.bind(this);
     // TEST BINDS
     this.userOne = this.userOne.bind(this);
     this.userTwo = this.userTwo.bind(this);
@@ -50,6 +53,7 @@ class App extends Component {
     socket.on('friends:refreshed', this.refreshFriends);
     socket.on('receive:message', this.receiveMessage);
     socket.on('receive:live', this.receiveLive);
+    socket.on('bomb:chat', this.bombChat);
   }
 
   // SOCKET FUNCTIONS
@@ -63,7 +67,7 @@ class App extends Component {
       user: this.state.profile
     };
     socket.emit('user:init', data);
-    let id = setInterval(this.refreshRequest, 2500);
+    let id = setInterval(this.refreshRequest, 1000);
     this.setState({ refreshId: id });
   }
 
@@ -102,6 +106,9 @@ class App extends Component {
       socket.emit('send:message', message);
     }
     textNode.value = '';
+    if (this.state.live_messages.indexOf(target.id) > -1) {
+      this.removeLiveMessage(false);
+    }
   }
 
   receiveMessage(data) {
@@ -113,9 +120,13 @@ class App extends Component {
     }
     convos[convoCode].push(data);
     me.points += 1;
+    let liveMsg = this.state.live_messages;
+    liveMsg.push(data.sender_id);
     this.setState({
       conversations: convos,
-      profile: me
+      profile: me,
+      liveChat: '',
+      live_messages: liveMsg
     });
   }
 
@@ -137,6 +148,22 @@ class App extends Component {
     }
   }
 
+  chatBomb() {
+    let me = this.state.profile;
+    let target = this.state.selectedFriend;
+    let payload = {
+      sender_id: me.id,
+      target_id: target.id
+    };
+    socket.emit('chat:bomb', payload);
+  }
+
+  bombChat(data) {
+    let convos = this.state.conversations;
+    delete convos[data.chat_id];
+    this.setState({ conversations: convos });
+  }
+
   // REACT FUNCTIONS
   changeView(newView) {
     this.setState({ view: newView });
@@ -147,6 +174,17 @@ class App extends Component {
       selectedFriend: friend,
       view: 'Chat'
     });
+  }
+
+  removeLiveMessage(zero) {
+    let live_msgs = this.state.live_messages;
+    let friend_id = this.state.selectedFriend.id;
+    let idx = live_msgs.indexOf(friend_id);
+    live_msgs.splice(idx, 1);
+    this.setState({ live_messages: live_msgs });
+    if (zero) {
+      this.chatBomb();
+    }
   }
 
   // TEST FUNCTIONS
@@ -196,6 +234,8 @@ class App extends Component {
           conversationView={conversationView}
           sendLive={this.sendLive}
           liveChat={this.state.liveChat}
+          live_messages={this.state.live_messages}
+          removeLiveMessage={this.removeLiveMessage}
             />
       </div>
     );
