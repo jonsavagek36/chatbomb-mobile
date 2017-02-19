@@ -12743,12 +12743,15 @@ var App = function (_Component) {
       view: '',
       profile: {},
       friends: [],
-      online_friends: []
+      online_friends: [],
+      refreshId: ''
     };
     // REACT BINDS
     _this.changeView = _this.changeView.bind(_this);
     // SOCKET BINDS
     _this.chatInit = _this.chatInit.bind(_this);
+    _this.refreshRequest = _this.refreshRequest.bind(_this);
+    _this.refreshFriends = _this.refreshFriends.bind(_this);
     // TEST BINDS
     _this.userOne = _this.userOne.bind(_this);
     _this.userTwo = _this.userTwo.bind(_this);
@@ -12763,10 +12766,16 @@ var App = function (_Component) {
       // INIT
       // SOCKET EVENTS
       socket.on('test', this.testSock);
+      socket.on('friends:refreshed', this.refreshFriends);
     }
 
     // SOCKET FUNCTIONS
 
+  }, {
+    key: 'testSock',
+    value: function testSock(data) {
+      console.log(data.msg);
+    }
   }, {
     key: 'chatInit',
     value: function chatInit() {
@@ -12775,11 +12784,18 @@ var App = function (_Component) {
         user: this.state.profile
       };
       socket.emit('user:init', data);
+      var id = setInterval(this.refreshRequest, 2500);
+      this.setState({ refreshId: id });
     }
   }, {
-    key: 'testSock',
-    value: function testSock(data) {
-      console.log(data.msg);
+    key: 'refreshRequest',
+    value: function refreshRequest() {
+      socket.emit('refresh:friends', { friends: this.state.friends });
+    }
+  }, {
+    key: 'refreshFriends',
+    value: function refreshFriends(data) {
+      this.setState({ online_friends: data.online_friends });
     }
 
     // REACT FUNCTIONS
@@ -12836,7 +12852,8 @@ var App = function (_Component) {
         }),
         _react2.default.createElement(_Body2.default, {
           view: this.state.view,
-          profile: this.state.profile
+          profile: this.state.profile,
+          online_friends: this.state.online_friends
         })
       );
     }
@@ -12962,7 +12979,8 @@ var Body = function (_Component) {
         'div',
         { id: 'appbody' },
         _react2.default.createElement(_Friends2.default, {
-          profile: this.props.profile
+          profile: this.props.profile,
+          online_friends: this.props.online_friends
         }),
         _react2.default.createElement(
           'div',
@@ -13370,7 +13388,9 @@ var Friends = function (_Component) {
         _react2.default.createElement(_Header2.default, {
           profile: this.props.profile
         }),
-        _react2.default.createElement(_List2.default, null)
+        _react2.default.createElement(_List2.default, {
+          online_friends: this.props.online_friends
+        })
       );
     }
   }]);
@@ -13477,12 +13497,19 @@ var List = function (_Component) {
   _createClass(List, [{
     key: 'render',
     value: function render() {
+      var friends = null;
+      if (this.props.online_friends !== undefined) {
+        friends = this.props.online_friends.map(function (friend, idx) {
+          return _react2.default.createElement(_Nameplate2.default, {
+            friend: friend,
+            key: idx
+          });
+        });
+      }
       return _react2.default.createElement(
         'div',
         { id: 'friendslist' },
-        _react2.default.createElement(_Nameplate2.default, null),
-        _react2.default.createElement(_Nameplate2.default, null),
-        _react2.default.createElement(_Nameplate2.default, null)
+        friends
       );
     }
   }]);
@@ -13532,7 +13559,11 @@ var Nameplate = function (_Component) {
   _createClass(Nameplate, [{
     key: 'render',
     value: function render() {
-      return _react2.default.createElement('div', { className: 'nameplate' });
+      return _react2.default.createElement(
+        'div',
+        { className: 'nameplate' },
+        this.props.friend.screen_name
+      );
     }
   }]);
 
@@ -14206,13 +14237,14 @@ var ButtonGroup = function (_Component) {
     value: function render() {
       var _this2 = this;
 
-      var buttons = this.buttons.map(function (button) {
+      var buttons = this.buttons.map(function (button, idx) {
         var changeView = function changeView() {
           _this2.props.changeView(button);
         };
         return _react2.default.createElement(_Button2.default, {
           name: button,
-          changeView: changeView
+          changeView: changeView,
+          key: idx
         });
       });
       return _react2.default.createElement(

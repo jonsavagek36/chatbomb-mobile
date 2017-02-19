@@ -9,6 +9,7 @@ class Nameplate extends Component {
   render() {
     return (
       <div className='nameplate'>
+        {this.props.friend.screen_name}
       </div>
     );
   }

@@ -15,7 +15,9 @@ class Friends extends Component {
         <Header
           profile={this.props.profile}
             />
-        <List />
+        <List
+          online_friends={this.props.online_friends}
+            />
       </div>
     );
   }
