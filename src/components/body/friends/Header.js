@@ -9,6 +9,7 @@ class Header extends Component {
   render() {
     return (
       <div id='friendsheader'>
+        {this.props.profile.screen_name}
       </div>
     );
   }

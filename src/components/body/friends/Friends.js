@@ -12,7 +12,9 @@ class Friends extends Component {
   render() {
     return (
       <div id='friends'>
-        <Header />
+        <Header
+          profile={this.props.profile}
+            />
         <List />
       </div>
     );

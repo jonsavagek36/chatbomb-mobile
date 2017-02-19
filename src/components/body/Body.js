@@ -24,7 +24,9 @@ class Body extends Component {
     }
     return (
       <div id='appbody'>
-        <Friends />
+        <Friends
+          profile={this.props.profile}
+            />
         <div id='view'>
           {view}
         </div>
