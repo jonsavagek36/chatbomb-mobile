@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title></title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div style='height:175px'>
+      <div class='bar1'></div>
+      <div class='bar2'></div>
+      <div class='bar3'></div>
+      <div class='bar4'></div>
+      <div class='bar5'></div>
+    </div>
+    <div class='centerdiv'>
+      <label>FB ID <input type='text' id='fb-id' /></label>
+      <label>Screen Name <input type='text' id='screen-name' /></label>
+      <label>Email <input type='text' id='email' /></label>
+      <button id='submit'>submit</button>
+    </div>
+    <script>
+      let fbNode = document.getElementById('fb-id');
+      let snNode = document.getElementById('screen-name');
+      let mailNode = document.getElementById('email');
+      let subBtn = document.getElementById('submit');
+      subBtn.addEventListener('click', function(event) {
+        event.preventDefault();
+        let fetchBody = {
+          facebook_id: fbNode.value,
+          screen_name: snNode.value,
+          email: mailNode.value
+        };
+        let myHeaders = new Headers();
+        myHeaders.append('Content-Type','application/json');
+        fetch('/add_user', {
+          method: 'POST',
+          body: JSON.stringify(fetchBody),
+          headers: myHeaders
+        })
+      });
+    </script>
+  </body>
+</html>
