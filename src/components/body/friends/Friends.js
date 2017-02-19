@@ -12,8 +12,12 @@ class Friends extends Component {
   render() {
     return (
       <div id='friends'>
-        <Header />
-        <List />
+        <Header
+          profile={this.props.profile}
+            />
+        <List
+          online_friends={this.props.online_friends}
+            />
       </div>
     );
   }

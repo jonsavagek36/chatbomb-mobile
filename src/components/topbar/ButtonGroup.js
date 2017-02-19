@@ -10,7 +10,7 @@ class ButtonGroup extends Component {
   }
 
   render() {
-    let buttons = this.buttons.map(button => {
+    let buttons = this.buttons.map((button, idx) => {
       let changeView = () => {
         this.props.changeView(button);
       }
@@ -18,6 +18,7 @@ class ButtonGroup extends Component {
         <Button
           name={button}
           changeView={changeView}
+          key={idx}
             />
       );
     });

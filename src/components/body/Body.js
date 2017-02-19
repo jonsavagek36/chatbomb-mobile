@@ -24,7 +24,10 @@ class Body extends Component {
     }
     return (
       <div id='appbody'>
-        <Friends />
+        <Friends
+          profile={this.props.profile}
+          online_friends={this.props.online_friends}
+            />
         <div id='view'>
           {view}
         </div>

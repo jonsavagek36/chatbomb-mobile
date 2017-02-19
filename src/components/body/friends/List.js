@@ -9,11 +9,20 @@ class List extends Component {
   }
 
   render() {
+    let friends = null;
+    if (this.props.online_friends !== undefined) {
+      friends = this.props.online_friends.map((friend, idx) => {
+        return (
+          <Nameplate
+            friend={friend}
+            key={idx}
+              />
+        );
+      });
+    }
     return (
       <div id='friendslist'>
-        <Nameplate />
-        <Nameplate />
-        <Nameplate />
+        {friends}
       </div>
     );
   }
