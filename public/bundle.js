@@ -13744,9 +13744,9 @@ var List = function (_Component) {
       var _this2 = this;
 
       var friends = null;
-      var newClass = void 0;
       if (this.props.online_friends !== undefined) {
         friends = this.props.online_friends.map(function (friend, idx) {
+          var newClass = void 0;
           var selectFriend = function selectFriend() {
             _this2.props.selectFriend(friend);
           };

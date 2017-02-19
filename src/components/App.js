@@ -10,7 +10,7 @@ import friends_one from './test/friends_one';
 import friends_two from './test/friends_two';
 import friends_three from './test/friends_three';
 
-let socket = io.connect('http://localhost:5000');
+let socket = io.connect('http://localhost:5000'); 
 
 class App extends Component {
   constructor(props) {
