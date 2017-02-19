@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import io from 'socket.io-client';
 
 import Topbar from './topbar/Topbar';
 import Body from './body/Body';
@@ -11,7 +10,7 @@ import friends_one from './test/friends_one';
 import friends_two from './test/friends_two';
 import friends_three from './test/friends_three';
 
-let socket = io.connect(`http://localhost:5000`);
+let socket = io.connect('http://localhost:5000');
 
 class App extends Component {
   constructor(props) {
@@ -25,15 +24,18 @@ class App extends Component {
     // REACT BINDS
     this.changeView = this.changeView.bind(this);
     // SOCKET BINDS
+    this.chatInit = this.chatInit.bind(this);
     // TEST BINDS
     this.userOne = this.userOne.bind(this);
     this.userTwo = this.userTwo.bind(this);
     this.userThree = this.userThree.bind(this);
+    this.startUser = this.startUser.bind(this);
   }
 
   componentDidMount() {
     // INIT
     // SOCKET EVENTS
+    socket.on('test', this.testSock);
   }
 
   // SOCKET FUNCTIONS
@@ -43,6 +45,10 @@ class App extends Component {
       user: this.state.profile
     };
     socket.emit('user:init', data);
+  }
+
+  testSock(data) {
+    console.log(data.msg);
   }
 
   // REACT FUNCTIONS

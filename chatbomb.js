@@ -10,6 +10,7 @@ exports.init = function(sio, socket) {
       socket_id: data.socket_id
     };
     clients[data.user.id] = user;
+    socket.emit('test', { msg: 'Working' });
   });
 
 }
