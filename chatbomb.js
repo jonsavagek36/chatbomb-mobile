@@ -5,11 +5,7 @@ exports.init = function(sio, socket) {
   let io = sio;
 
   socket.on('user:init', function(data) {
-    let user = {
-      user: data.user,
-      socket_id: data.socket_id
-    };
-    clients[data.user.id] = user;
+    clients[data.user.id] = data.socket_id;
     socket.emit('test', { msg: 'Working' });
   });
 
@@ -24,4 +20,19 @@ exports.init = function(sio, socket) {
     socket.emit('friends:refreshed', { online_friends: on_friends });
   });
 
+  socket.once('disconnect', function() {
+    let userId = getKey(socket.id, clients);
+    delete clients[userId];
+  });
+
+}
+
+function getKey(val, obj) {
+  for (let key in obj) {
+    value = obj[key];
+    if (value == val) {
+      return key;
+      break;
+    }
+  }
 }
