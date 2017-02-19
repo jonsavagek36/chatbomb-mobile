@@ -17,8 +17,8 @@ class Body extends Component {
       view = <Settings />;
     } else if (this.props.view == 'Requests') {
       view = <Requests />;
-    } else if (this.props.view == 'Chat') {
-      view = <Chat />;
+    } else if (this.props.view == 'Chat' && this.props.selectedFriend !== null) {
+      view = <Chat selectedFriend={this.props.selectedFriend} sendMessage={this.props.sendMessage} conversationView={this.props.conversationView} sendLive={this.props.sendLive} liveChat={this.props.liveChat} live_messages={this.props.live_messages} removeLiveMessage={this.props.removeLiveMessage} />;
     } else {
       view = null;
     }
@@ -27,6 +27,8 @@ class Body extends Component {
         <Friends
           profile={this.props.profile}
           online_friends={this.props.online_friends}
+          selectFriend={this.props.selectFriend}
+          selectedFriend={this.props.selectedFriend}
             />
         <div id='view'>
           {view}

@@ -9,6 +9,7 @@ class LiveText extends Component {
   render() {
     return (
       <div className='livetext' id='live'>
+        {this.props.liveChat}
       </div>
     );
   }

@@ -12744,14 +12744,25 @@ var App = function (_Component) {
       profile: {},
       friends: [],
       online_friends: [],
-      refreshId: ''
+      refreshId: '',
+      selectedFriend: {},
+      conversations: {},
+      liveChat: '',
+      live_messages: []
     };
     // REACT BINDS
     _this.changeView = _this.changeView.bind(_this);
+    _this.selectFriend = _this.selectFriend.bind(_this);
+    _this.removeLiveMessage = _this.removeLiveMessage.bind(_this);
     // SOCKET BINDS
     _this.chatInit = _this.chatInit.bind(_this);
     _this.refreshRequest = _this.refreshRequest.bind(_this);
     _this.refreshFriends = _this.refreshFriends.bind(_this);
+    _this.sendMessage = _this.sendMessage.bind(_this);
+    _this.receiveMessage = _this.receiveMessage.bind(_this);
+    _this.sendLive = _this.sendLive.bind(_this);
+    _this.receiveLive = _this.receiveLive.bind(_this);
+    _this.bombChat = _this.bombChat.bind(_this);
     // TEST BINDS
     _this.userOne = _this.userOne.bind(_this);
     _this.userTwo = _this.userTwo.bind(_this);
@@ -12767,6 +12778,9 @@ var App = function (_Component) {
       // SOCKET EVENTS
       socket.on('test', this.testSock);
       socket.on('friends:refreshed', this.refreshFriends);
+      socket.on('receive:message', this.receiveMessage);
+      socket.on('receive:live', this.receiveLive);
+      socket.on('bomb:chat', this.bombChat);
     }
 
     // SOCKET FUNCTIONS
@@ -12784,7 +12798,7 @@ var App = function (_Component) {
         user: this.state.profile
       };
       socket.emit('user:init', data);
-      var id = setInterval(this.refreshRequest, 2500);
+      var id = setInterval(this.refreshRequest, 1000);
       this.setState({ refreshId: id });
     }
   }, {
@@ -12797,6 +12811,97 @@ var App = function (_Component) {
     value: function refreshFriends(data) {
       this.setState({ online_friends: data.online_friends });
     }
+  }, {
+    key: 'sendMessage',
+    value: function sendMessage() {
+      var me = this.state.profile;
+      var target = this.state.selectedFriend;
+      var convos = this.state.conversations;
+      var convoCode = target.id;
+      var textNode = document.getElementById('sendmsg');
+      var message = {
+        sender_id: me.id,
+        target_id: target.id,
+        sender_name: me.screen_name,
+        target_name: target.screen_name,
+        msg: textNode.value
+      };
+      if (convos[convoCode] == undefined) {
+        convos[convoCode] = [];
+      }
+      var last = convos[convoCode].length - 1;
+      if (last > -1) {
+        if (convos[convoCode][last].sender_id != me.id) {
+          convos[convoCode].push(message);
+          socket.emit('send:message', message);
+        }
+      } else {
+        convos[convoCode].push(message);
+        socket.emit('send:message', message);
+      }
+      textNode.value = '';
+      if (this.state.live_messages.indexOf(target.id) > -1) {
+        this.removeLiveMessage(false);
+      }
+    }
+  }, {
+    key: 'receiveMessage',
+    value: function receiveMessage(data) {
+      var me = this.state.profile;
+      var convos = this.state.conversations;
+      var convoCode = data.sender_id;
+      if (convos[convoCode] == undefined) {
+        convos[convoCode] = [];
+      }
+      convos[convoCode].push(data);
+      me.points += 1;
+      var liveMsg = this.state.live_messages;
+      liveMsg.push(data.sender_id);
+      this.setState({
+        conversations: convos,
+        profile: me,
+        liveChat: '',
+        live_messages: liveMsg
+      });
+    }
+  }, {
+    key: 'sendLive',
+    value: function sendLive() {
+      var me = this.state.profile;
+      var target = this.state.selectedFriend;
+      var textNode = document.getElementById('sendmsg');
+      var live_msg = {
+        sender_id: me.id,
+        target_id: target.id,
+        live_update: textNode.value
+      };
+      socket.emit('send:live', live_msg);
+    }
+  }, {
+    key: 'receiveLive',
+    value: function receiveLive(data) {
+      if (data.sender_id == this.state.selectedFriend.id) {
+        this.setState({ liveChat: data.live_update });
+      }
+    }
+  }, {
+    key: 'chatBomb',
+    value: function chatBomb() {
+      var me = this.state.profile;
+      var target = this.state.selectedFriend;
+      var payload = {
+        sender_id: me.id,
+        target_id: target.id
+      };
+      socket.emit('chat:bomb', payload);
+    }
+  }, {
+    key: 'bombChat',
+    value: function bombChat(data) {
+      var convos = this.state.conversations;
+      delete convos[data.chat_id];
+      this.setState({ conversations: convos });
+    }
 
     // REACT FUNCTIONS
 
@@ -12804,6 +12909,26 @@ var App = function (_Component) {
     key: 'changeView',
     value: function changeView(newView) {
       this.setState({ view: newView });
+    }
+  }, {
+    key: 'selectFriend',
+    value: function selectFriend(friend) {
+      this.setState({
+        selectedFriend: friend,
+        view: 'Chat'
+      });
+    }
+  }, {
+    key: 'removeLiveMessage',
+    value: function removeLiveMessage(zero) {
+      var live_msgs = this.state.live_messages;
+      var friend_id = this.state.selectedFriend.id;
+      var idx = live_msgs.indexOf(friend_id);
+      live_msgs.splice(idx, 1);
+      this.setState({ live_messages: live_msgs });
+      if (zero) {
+        this.chatBomb();
+      }
     }
 
     // TEST FUNCTIONS
@@ -12840,6 +12965,10 @@ var App = function (_Component) {
   }, {
     key: 'render',
     value: function render() {
+      var conversationView = null;
+      if (this.state.selectedFriend !== undefined) {
+        conversationView = this.state.conversations[this.state.selectedFriend.id];
+      }
       return _react2.default.createElement(
         'div',
         null,
@@ -12853,7 +12982,15 @@ var App = function (_Component) {
         _react2.default.createElement(_Body2.default, {
           view: this.state.view,
           profile: this.state.profile,
-          online_friends: this.state.online_friends
+          online_friends: this.state.online_friends,
+          selectFriend: this.selectFriend,
+          selectedFriend: this.state.selectedFriend,
+          sendMessage: this.sendMessage,
+          conversationView: conversationView,
+          sendLive: this.sendLive,
+          liveChat: this.state.liveChat,
+          live_messages: this.state.live_messages,
+          removeLiveMessage: this.removeLiveMessage
         })
       );
     }
@@ -12970,8 +13107,8 @@ var Body = function (_Component) {
         view = _react2.default.createElement(_Settings2.default, null);
       } else if (this.props.view == 'Requests') {
         view = _react2.default.createElement(_Requests2.default, null);
-      } else if (this.props.view == 'Chat') {
-        view = _react2.default.createElement(_Chat2.default, null);
+      } else if (this.props.view == 'Chat' && this.props.selectedFriend !== null) {
+        view = _react2.default.createElement(_Chat2.default, { selectedFriend: this.props.selectedFriend, sendMessage: this.props.sendMessage, conversationView: this.props.conversationView, sendLive: this.props.sendLive, liveChat: this.props.liveChat, live_messages: this.props.live_messages, removeLiveMessage: this.props.removeLiveMessage });
       } else {
         view = null;
       }
@@ -12980,7 +13117,9 @@ var Body = function (_Component) {
         { id: 'appbody' },
         _react2.default.createElement(_Friends2.default, {
           profile: this.props.profile,
-          online_friends: this.props.online_friends
+          online_friends: this.props.online_friends,
+          selectFriend: this.props.selectFriend,
+          selectedFriend: this.props.selectedFriend
         }),
         _react2.default.createElement(
           'div',
@@ -13045,20 +13184,45 @@ var Box = function (_Component) {
 
     var _this = _possibleConstructorReturn(this, (Box.__proto__ || Object.getPrototypeOf(Box)).call(this, props));
 
-    _this.state = {};
+    _this.state = {
+      timer: null
+    };
+    _this.updateTimer = _this.updateTimer.bind(_this);
     return _this;
   }
 
   _createClass(Box, [{
+    key: 'updateTimer',
+    value: function updateTimer(time) {
+      this.setState({ timer: time });
+    }
+  }, {
     key: 'render',
     value: function render() {
+      var live = false;
+      if (this.props.live_messages.indexOf(this.props.selectedFriend.id) > -1) {
+        live = true;
+      }
       return _react2.default.createElement(
         'div',
         { className: 'chatbox' },
-        _react2.default.createElement(_ChatHeader2.default, null),
-        _react2.default.createElement(_ChatBody2.default, null),
-        _react2.default.createElement(_LiveText2.default, null),
-        _react2.default.createElement(_SendText2.default, null)
+        _react2.default.createElement(_ChatHeader2.default, {
+          selectedFriend: this.props.selectedFriend,
+          live: live,
+          removeLiveMessage: this.props.removeLiveMessage,
+          timer: this.state.timer,
+          updateTimer: this.updateTimer
+        }),
+        _react2.default.createElement(_ChatBody2.default, {
+          conversationView: this.props.conversationView
+        }),
+        _react2.default.createElement(_LiveText2.default, {
+          liveChat: this.props.liveChat
+        }),
+        _react2.default.createElement(_SendText2.default, {
+          sendMessage: this.props.sendMessage,
+          sendLive: this.props.sendLive
+        })
       );
     }
   }]);
@@ -13115,7 +13279,15 @@ var Chat = function (_Component) {
       return _react2.default.createElement(
         'div',
         null,
-        _react2.default.createElement(_Box2.default, null)
+        _react2.default.createElement(_Box2.default, {
+          selectedFriend: this.props.selectedFriend,
+          sendMessage: this.props.sendMessage,
+          conversationView: this.props.conversationView,
+          sendLive: this.props.sendLive,
+          liveChat: this.props.liveChat,
+          live_messages: this.props.live_messages,
+          removeLiveMessage: this.props.removeLiveMessage
+        })
       );
     }
   }]);
@@ -13165,7 +13337,27 @@ var ChatBody = function (_Component) {
   _createClass(ChatBody, [{
     key: 'render',
     value: function render() {
-      return _react2.default.createElement('div', { className: 'chatbody' });
+      var conversation = null;
+      if (this.props.conversationView !== undefined) {
+        conversation = this.props.conversationView.map(function (message, idx) {
+          return _react2.default.createElement(
+            'li',
+            { key: idx },
+            message.sender_name,
+            ': ',
+            message.msg
+          );
+        });
+      }
+      return _react2.default.createElement(
+        'div',
+        { className: 'chatbody' },
+        _react2.default.createElement(
+          'ul',
+          { className: 'nobullets' },
+          conversation
+        )
+      );
     }
   }]);
 
@@ -13208,13 +13400,57 @@ var ChatHeader = function (_Component) {
     var _this = _possibleConstructorReturn(this, (ChatHeader.__proto__ || Object.getPrototypeOf(ChatHeader)).call(this, props));
 
     _this.state = {};
+    _this.timerId = '';
     return _this;
   }
 
   _createClass(ChatHeader, [{
+    key: 'componentWillReceiveProps',
+    value: function componentWillReceiveProps(nextProps) {
+      if (nextProps.live && nextProps.timer == null) {
+        this.startTimer();
+      } else if (this.props.live && nextProps.live == false) {
+        this.stopTimer();
+      }
+    }
+  }, {
+    key: 'startTimer',
+    value: function startTimer() {
+      var _ = this;
+      _.props.updateTimer(30);
+      var start = Date.now();
+      var diff = void 0;
+      var seconds = void 0;
+      function timer() {
+        diff = 30 - ((Date.now() - start) / 1000 | 0);
+        seconds = diff % 60 | 0;
+        seconds = seconds < 10 ? "0" + seconds : seconds;
+        _.props.updateTimer(seconds);
+        if (seconds == 0) {
+          _.props.removeLiveMessage(true);
+        }
+        if (diff <= 0) {
+          start = Date.now() + 1000;
+        }
+      };
+      timer();
+      _.timerId = setInterval(timer, 1000);
+    }
+  }, {
+    key: 'stopTimer',
+    value: function stopTimer() {
+      clearInterval(this.timerId);
+      this.props.updateTimer(null);
+    }
+  }, {
     key: 'render',
     value: function render() {
-      return _react2.default.createElement('div', { className: 'chatheader' });
+      return _react2.default.createElement(
+        'div',
+        { className: 'chatheader' },
+        this.props.selectedFriend.screen_name,
+        this.props.timer
+      );
     }
   }]);
 
@@ -13263,7 +13499,11 @@ var LiveText = function (_Component) {
   _createClass(LiveText, [{
     key: 'render',
     value: function render() {
-      return _react2.default.createElement('div', { className: 'livetext', id: 'live' });
+      return _react2.default.createElement(
+        'div',
+        { className: 'livetext', id: 'live' },
+        this.props.liveChat
+      );
     }
   }]);
 
@@ -13318,10 +13558,10 @@ var SendText = function (_Component) {
         _react2.default.createElement(
           'div',
           { className: 'formrow' },
-          _react2.default.createElement('input', { type: 'text', id: 'sendmsg', style: { width: 301 } }),
+          _react2.default.createElement('input', { type: 'text', id: 'sendmsg', style: { width: 301 }, onChange: this.props.sendLive }),
           _react2.default.createElement(
             'button',
-            null,
+            { onClick: this.props.sendMessage },
             'send'
           )
         )
@@ -13389,7 +13629,9 @@ var Friends = function (_Component) {
           profile: this.props.profile
         }),
         _react2.default.createElement(_List2.default, {
-          online_friends: this.props.online_friends
+          online_friends: this.props.online_friends,
+          selectFriend: this.props.selectFriend,
+          selectedFriend: this.props.selectedFriend
         })
       );
     }
@@ -13443,7 +13685,9 @@ var Header = function (_Component) {
       return _react2.default.createElement(
         'div',
         { id: 'friendsheader' },
-        this.props.profile.screen_name
+        this.props.profile.screen_name,
+        'points: ',
+        this.props.profile.points
       );
     }
   }]);
@@ -13497,12 +13741,25 @@ var List = function (_Component) {
   _createClass(List, [{
     key: 'render',
     value: function render() {
+      var _this2 = this;
+
       var friends = null;
+      var newClass = void 0;
       if (this.props.online_friends !== undefined) {
         friends = this.props.online_friends.map(function (friend, idx) {
+          var selectFriend = function selectFriend() {
+            _this2.props.selectFriend(friend);
+          };
+          if (_this2.props.selectedFriend.id == friend.id) {
+            newClass = 'selectednameplate';
+          } else {
+            newClass = 'nameplate';
+          }
           return _react2.default.createElement(_Nameplate2.default, {
             friend: friend,
-            key: idx
+            key: idx,
+            selectFriend: selectFriend,
+            newClass: newClass
           });
         });
       }
@@ -13538,6 +13795,8 @@ var _react2 = _interopRequireDefault(_react);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
@@ -13561,7 +13820,7 @@ var Nameplate = function (_Component) {
     value: function render() {
       return _react2.default.createElement(
         'div',
-        { className: 'nameplate' },
+        _defineProperty({ className: 'nameplate', onClick: this.props.selectFriend }, 'className', this.props.newClass),
         this.props.friend.screen_name
       );
     }

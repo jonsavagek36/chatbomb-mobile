@@ -20,11 +20,27 @@ exports.init = function(sio, socket) {
     socket.emit('friends:refreshed', { online_friends: on_friends });
   });
 
+  socket.on('send:message', function(data) {
+    let target_sock = clients[data.target_id];
+    io.to(target_sock).emit('receive:message', data);
+  });
+
+  socket.on('send:live', function(data) {
+    let target_sock = clients[data.target_id];
+    io.to(target_sock).emit('receive:live', data);
+  });
+
+  socket.on('chat:bomb', function(data) {
+    let target_one = clients[data.sender_id];
+    let target_two = clients[data.target_id];
+    io.to(target_one).emit('bomb:chat', { chat_id: data.target_id });
+    io.to(target_two).emit('bomb:chat', { chat_id: data.sender_id });
+  });
+
   socket.once('disconnect', function() {
     let userId = getKey(socket.id, clients);
     delete clients[userId];
   });
-
 }
 
 function getKey(val, obj) {

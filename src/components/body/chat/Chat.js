@@ -11,7 +11,15 @@ class Chat extends Component {
   render() {
     return (
       <div>
-        <Box />
+        <Box
+          selectedFriend={this.props.selectedFriend}
+          sendMessage={this.props.sendMessage}
+          conversationView={this.props.conversationView}
+          sendLive={this.props.sendLive}
+          liveChat={this.props.liveChat}
+          live_messages={this.props.live_messages}
+          removeLiveMessage={this.props.removeLiveMessage}
+            />
       </div>
     );
   }
