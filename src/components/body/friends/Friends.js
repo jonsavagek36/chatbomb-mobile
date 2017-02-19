@@ -17,6 +17,8 @@ class Friends extends Component {
             />
         <List
           online_friends={this.props.online_friends}
+          selectFriend={this.props.selectFriend}
+          selectedFriend={this.props.selectedFriend}
             />
       </div>
     );

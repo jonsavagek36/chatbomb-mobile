@@ -12744,10 +12744,12 @@ var App = function (_Component) {
       profile: {},
       friends: [],
       online_friends: [],
-      refreshId: ''
+      refreshId: '',
+      selectedFriend: {}
     };
     // REACT BINDS
     _this.changeView = _this.changeView.bind(_this);
+    _this.selectFriend = _this.selectFriend.bind(_this);
     // SOCKET BINDS
     _this.chatInit = _this.chatInit.bind(_this);
     _this.refreshRequest = _this.refreshRequest.bind(_this);
@@ -12805,6 +12807,11 @@ var App = function (_Component) {
     value: function changeView(newView) {
       this.setState({ view: newView });
     }
+  }, {
+    key: 'selectFriend',
+    value: function selectFriend(friend) {
+      this.setState({ selectedFriend: friend });
+    }
 
     // TEST FUNCTIONS
 
@@ -12853,7 +12860,9 @@ var App = function (_Component) {
         _react2.default.createElement(_Body2.default, {
           view: this.state.view,
           profile: this.state.profile,
-          online_friends: this.state.online_friends
+          online_friends: this.state.online_friends,
+          selectFriend: this.selectFriend,
+          selectedFriend: this.state.selectedFriend
         })
       );
     }
@@ -12980,7 +12989,9 @@ var Body = function (_Component) {
         { id: 'appbody' },
         _react2.default.createElement(_Friends2.default, {
           profile: this.props.profile,
-          online_friends: this.props.online_friends
+          online_friends: this.props.online_friends,
+          selectFriend: this.props.selectFriend,
+          selectedFriend: this.props.selectedFriend
         }),
         _react2.default.createElement(
           'div',
@@ -13389,7 +13400,9 @@ var Friends = function (_Component) {
           profile: this.props.profile
         }),
         _react2.default.createElement(_List2.default, {
-          online_friends: this.props.online_friends
+          online_friends: this.props.online_friends,
+          selectFriend: this.props.selectFriend,
+          selectedFriend: this.props.selectedFriend
         })
       );
     }
@@ -13497,12 +13510,25 @@ var List = function (_Component) {
   _createClass(List, [{
     key: 'render',
     value: function render() {
+      var _this2 = this;
+
       var friends = null;
+      var newClass = void 0;
       if (this.props.online_friends !== undefined) {
         friends = this.props.online_friends.map(function (friend, idx) {
+          var selectFriend = function selectFriend() {
+            _this2.props.selectFriend(friend);
+          };
+          if (_this2.props.selectedFriend.id == friend.id) {
+            newClass = 'selectednameplate';
+          } else {
+            newClass = 'nameplate';
+          }
           return _react2.default.createElement(_Nameplate2.default, {
             friend: friend,
-            key: idx
+            key: idx,
+            selectFriend: selectFriend,
+            newClass: newClass
           });
         });
       }
@@ -13538,6 +13564,8 @@ var _react2 = _interopRequireDefault(_react);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
@@ -13561,7 +13589,7 @@ var Nameplate = function (_Component) {
     value: function render() {
       return _react2.default.createElement(
         'div',
-        { className: 'nameplate' },
+        _defineProperty({ className: 'nameplate', onClick: this.props.selectFriend }, 'className', this.props.newClass),
         this.props.friend.screen_name
       );
     }

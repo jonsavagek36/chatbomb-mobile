@@ -20,10 +20,12 @@ class App extends Component {
       profile: {},
       friends: [],
       online_friends: [],
-      refreshId: ''
+      refreshId: '',
+      selectedFriend: {}
     };
     // REACT BINDS
     this.changeView = this.changeView.bind(this);
+    this.selectFriend = this.selectFriend.bind(this);
     // SOCKET BINDS
     this.chatInit = this.chatInit.bind(this);
     this.refreshRequest = this.refreshRequest.bind(this);
@@ -70,6 +72,10 @@ class App extends Component {
     this.setState({ view: newView });
   }
 
+  selectFriend(friend) {
+    this.setState({ selectedFriend: friend });
+  }
+
   // TEST FUNCTIONS
   userOne() {
     this.setState({
@@ -107,6 +113,8 @@ class App extends Component {
           view={this.state.view}
           profile={this.state.profile}
           online_friends={this.state.online_friends}
+          selectFriend={this.selectFriend}
+          selectedFriend={this.state.selectedFriend}
             />
       </div>
     );

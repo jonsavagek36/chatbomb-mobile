@@ -10,12 +10,23 @@ class List extends Component {
 
   render() {
     let friends = null;
+    let newClass;
     if (this.props.online_friends !== undefined) {
       friends = this.props.online_friends.map((friend, idx) => {
+        let selectFriend = () => {
+          this.props.selectFriend(friend);
+        }
+        if (this.props.selectedFriend.id == friend.id) {
+          newClass = 'selectednameplate';
+        } else {
+          newClass = 'nameplate';
+        }
         return (
           <Nameplate
             friend={friend}
             key={idx}
+            selectFriend={selectFriend}
+            newClass={newClass}
               />
         );
       });

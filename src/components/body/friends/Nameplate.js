@@ -8,7 +8,7 @@ class Nameplate extends Component {
 
   render() {
     return (
-      <div className='nameplate'>
+      <div className='nameplate' onClick={this.props.selectFriend} className={this.props.newClass}>
         {this.props.friend.screen_name}
       </div>
     );

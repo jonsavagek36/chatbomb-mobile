@@ -24,7 +24,6 @@ exports.init = function(sio, socket) {
     let userId = getKey(socket.id, clients);
     delete clients[userId];
   });
-
 }
 
 function getKey(val, obj) {

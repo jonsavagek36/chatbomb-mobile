@@ -27,6 +27,8 @@ class Body extends Component {
         <Friends
           profile={this.props.profile}
           online_friends={this.props.online_friends}
+          selectFriend={this.props.selectFriend}
+          selectedFriend={this.props.selectedFriend}
             />
         <div id='view'>
           {view}
