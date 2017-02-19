@@ -22,7 +22,8 @@ class App extends Component {
       online_friends: [],
       refreshId: '',
       selectedFriend: {},
-      conversations: {}
+      conversations: {},
+      liveChat: ''
     };
     // REACT BINDS
     this.changeView = this.changeView.bind(this);
@@ -33,6 +34,8 @@ class App extends Component {
     this.refreshFriends = this.refreshFriends.bind(this);
     this.sendMessage = this.sendMessage.bind(this);
     this.receiveMessage = this.receiveMessage.bind(this);
+    this.sendLive = this.sendLive.bind(this);
+    this.receiveLive = this.receiveLive.bind(this);
     // TEST BINDS
     this.userOne = this.userOne.bind(this);
     this.userTwo = this.userTwo.bind(this);
@@ -46,6 +49,7 @@ class App extends Component {
     socket.on('test', this.testSock);
     socket.on('friends:refreshed', this.refreshFriends);
     socket.on('receive:message', this.receiveMessage);
+    socket.on('receive:live', this.receiveLive);
   }
 
   // SOCKET FUNCTIONS
@@ -115,13 +119,34 @@ class App extends Component {
     });
   }
 
+  sendLive() {
+    let me = this.state.profile;
+    let target = this.state.selectedFriend;
+    let textNode = document.getElementById('sendmsg');
+    let live_msg = {
+      sender_id: me.id,
+      target_id: target.id,
+      live_update: textNode.value
+    };
+    socket.emit('send:live', live_msg);
+  }
+
+  receiveLive(data) {
+    if (data.sender_id == this.state.selectedFriend.id) {
+      this.setState({ liveChat: data.live_update });
+    }
+  }
+
   // REACT FUNCTIONS
   changeView(newView) {
     this.setState({ view: newView });
   }
 
   selectFriend(friend) {
-    this.setState({ selectedFriend: friend });
+    this.setState({
+      selectedFriend: friend,
+      view: 'Chat'
+    });
   }
 
   // TEST FUNCTIONS
@@ -169,6 +194,8 @@ class App extends Component {
           selectedFriend={this.state.selectedFriend}
           sendMessage={this.sendMessage}
           conversationView={conversationView}
+          sendLive={this.sendLive}
+          liveChat={this.state.liveChat}
             />
       </div>
     );

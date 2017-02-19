@@ -25,6 +25,11 @@ exports.init = function(sio, socket) {
     io.to(target_sock).emit('receive:message', data);
   });
 
+  socket.on('send:live', function(data) {
+    let target_sock = clients[data.target_id];
+    io.to(target_sock).emit('receive:live', data);
+  });
+
   socket.once('disconnect', function() {
     let userId = getKey(socket.id, clients);
     delete clients[userId];

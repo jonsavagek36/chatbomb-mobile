@@ -18,9 +18,12 @@ class Box extends Component {
         <ChatBody
           conversationView={this.props.conversationView}
             />
-        <LiveText />
+        <LiveText
+          liveChat={this.props.liveChat}
+            />
         <SendText
           sendMessage={this.props.sendMessage}
+          sendLive={this.props.sendLive}
             />
       </div>
     );
