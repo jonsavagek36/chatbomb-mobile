@@ -8,5 +8,7 @@ Still in progress, but what I'm currently implementing:
 <li>New styling and layout (not a priority on the first version)</li>
 <li>Replace the Rails API with a MongoDB backend</li>
 <li>Implement a Node mailer</li>
+<li>Refactoring code to increase run-time efficiency</li>
+<li>Fixing all of the bugs!</li>
 <li>More to come...</li>
 </ul>
