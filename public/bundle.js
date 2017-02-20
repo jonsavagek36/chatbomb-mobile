@@ -13445,11 +13445,29 @@ var ChatHeader = function (_Component) {
   }, {
     key: 'render',
     value: function render() {
+      var time = '00:00';
+      if (this.props.timer != null) {
+        time = '00:' + this.props.timer.toString();
+      }
       return _react2.default.createElement(
         'div',
         { className: 'chatheader' },
-        this.props.selectedFriend.screen_name,
-        this.props.timer
+        _react2.default.createElement(
+          'div',
+          { className: 'chatname' },
+          this.props.selectedFriend.screen_name
+        ),
+        _react2.default.createElement(
+          'div',
+          { className: 'chattimer' },
+          time
+        ),
+        _react2.default.createElement(
+          'div',
+          { className: 'chatbtns' },
+          _react2.default.createElement('img', { src: 'http://img.freepik.com/icones-gratuites/chronometre_318-138757.jpg?size=338&ext=jpg', className: 'watchicon' }),
+          _react2.default.createElement('img', { src: 'https://www.iconexperience.com/_img/o_collection_png/green_dark_grey/512x512/plain/bomb.png', className: 'bombicon' })
+        )
       );
     }
   }]);
