@@ -43,10 +43,22 @@ class ChatHeader extends Component {
   }
 
   render() {
+    let time = '00:00';
+    if (this.props.timer != null) {
+      time = '00:' + this.props.timer.toString();
+    }
     return (
       <div className='chatheader'>
-        {this.props.selectedFriend.screen_name}
-        {this.props.timer}
+        <div className='chatname'>
+          {this.props.selectedFriend.screen_name}
+        </div>
+        <div className='chattimer'>
+          {time}
+        </div>
+        <div className='chatbtns'>
+          <img src={'http://img.freepik.com/icones-gratuites/chronometre_318-138757.jpg?size=338&ext=jpg'} className='watchicon' />
+          <img src={'https://www.iconexperience.com/_img/o_collection_png/green_dark_grey/512x512/plain/bomb.png'} className='bombicon' />
+        </div>
       </div>
     );
   }
