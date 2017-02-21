@@ -24,6 +24,8 @@ class Box extends Component {
           live={live}
           updateTimer={this.props.updateTimer}
           timer={this.props.timer}
+          extendTimer={this.props.extendTimer}
+          nukeChat={this.props.nukeChat}
             />
         <ChatBody
           conversationView={this.props.conversationView}

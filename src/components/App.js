@@ -32,6 +32,8 @@ class App extends Component {
     this.selectFriend = this.selectFriend.bind(this);
     this.removeLiveMessage = this.removeLiveMessage.bind(this);
     this.updateTimer = this.updateTimer.bind(this);
+    this.extendTimer = this.extendTimer.bind(this);
+    this.nukeChat = this.nukeChat.bind(this);
     // SOCKET BINDS
     this.chatInit = this.chatInit.bind(this);
     this.refreshRequest = this.refreshRequest.bind(this);
@@ -193,6 +195,28 @@ class App extends Component {
     this.setState({ timer: time });
   }
 
+  extendTimer() {
+    if (this.state.live_messages.indexOf(this.state.selectedFriend.id) > -1 && this.state.timer < 45) {
+      if (this.state.profile.points >= 5) {
+        let upProfile = this.state.profile;
+        upProfile.points -= 5;
+        this.setState({
+          timer: this.state.timer + 15,
+          profile: upProfile
+        });
+      }
+    }
+  }
+
+  nukeChat() {
+    if (this.state.profile.points >= 20) {
+      let upProfile = this.state.profile;
+      upProfile.points -= 20;
+      this.setState({ profile: upProfile });
+      this.chatBomb();
+    }
+  }
+
   // TEST FUNCTIONS
   userOne() {
     this.setState({
@@ -244,6 +268,8 @@ class App extends Component {
           removeLiveMessage={this.removeLiveMessage}
           updateTimer={this.updateTimer}
           timer={this.state.timer}
+          extendTimer={this.extendTimer}
+          nukeChat={this.nukeChat}
             />
       </div>
     );

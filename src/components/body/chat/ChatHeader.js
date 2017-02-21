@@ -15,7 +15,7 @@ class ChatHeader extends Component {
     }
   }
 
-  startTimer() {
+  startTimer() { 
     let _ = this;
     _.props.updateTimer(30);
     let start = Date.now();
@@ -56,8 +56,8 @@ class ChatHeader extends Component {
           {time}
         </div>
         <div className='chatbtns'>
-          <img src={'http://img.freepik.com/icones-gratuites/chronometre_318-138757.jpg?size=338&ext=jpg'} className='watchicon' />
-          <img src={'https://www.iconexperience.com/_img/o_collection_png/green_dark_grey/512x512/plain/bomb.png'} className='bombicon' />
+          <img src={'http://img.freepik.com/icones-gratuites/chronometre_318-138757.jpg?size=338&ext=jpg'} className='watchicon' onClick={this.props.extendTimer} />
+          <img src={'https://www.iconexperience.com/_img/o_collection_png/green_dark_grey/512x512/plain/bomb.png'} className='bombicon' onClick={this.props.nukeChat} />
         </div>
       </div>
     );
