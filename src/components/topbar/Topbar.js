@@ -21,6 +21,9 @@ class Topbar extends Component {
           <button onClick={this.props.startUser}>start</button>
         </div>
         <div className='bar5'>
+          <div id='titlething'>
+            Chatbomb
+          </div>
           <ButtonGroup
             changeView={this.props.changeView}
               />
