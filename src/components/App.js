@@ -10,7 +10,7 @@ import friends_one from './test/friends_one';
 import friends_two from './test/friends_two';
 import friends_three from './test/friends_three';
 
-let socket = io.connect('http://localhost:5000'); 
+let socket = io.connect('http://localhost:5000');
 
 class App extends Component {
   constructor(props) {
@@ -24,12 +24,14 @@ class App extends Component {
       selectedFriend: {},
       conversations: {},
       liveChat: '',
-      live_messages: []
+      live_messages: [],
+      timer: null
     };
     // REACT BINDS
     this.changeView = this.changeView.bind(this);
     this.selectFriend = this.selectFriend.bind(this);
     this.removeLiveMessage = this.removeLiveMessage.bind(this);
+    this.updateTimer = this.updateTimer.bind(this);
     // SOCKET BINDS
     this.chatInit = this.chatInit.bind(this);
     this.refreshRequest = this.refreshRequest.bind(this);
@@ -187,6 +189,10 @@ class App extends Component {
     }
   }
 
+  updateTimer(time) {
+    this.setState({ timer: time });
+  }
+
   // TEST FUNCTIONS
   userOne() {
     this.setState({
@@ -236,6 +242,8 @@ class App extends Component {
           liveChat={this.state.liveChat}
           live_messages={this.state.live_messages}
           removeLiveMessage={this.removeLiveMessage}
+          updateTimer={this.updateTimer}
+          timer={this.state.timer}
             />
       </div>
     );

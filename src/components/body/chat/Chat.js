@@ -19,6 +19,8 @@ class Chat extends Component {
           liveChat={this.props.liveChat}
           live_messages={this.props.live_messages}
           removeLiveMessage={this.props.removeLiveMessage}
+          updateTimer={this.props.updateTimer}
+          timer={this.props.timer}
             />
       </div>
     );

@@ -12748,12 +12748,14 @@ var App = function (_Component) {
       selectedFriend: {},
       conversations: {},
       liveChat: '',
-      live_messages: []
+      live_messages: [],
+      timer: null
     };
     // REACT BINDS
     _this.changeView = _this.changeView.bind(_this);
     _this.selectFriend = _this.selectFriend.bind(_this);
     _this.removeLiveMessage = _this.removeLiveMessage.bind(_this);
+    _this.updateTimer = _this.updateTimer.bind(_this);
     // SOCKET BINDS
     _this.chatInit = _this.chatInit.bind(_this);
     _this.refreshRequest = _this.refreshRequest.bind(_this);
@@ -12930,6 +12932,11 @@ var App = function (_Component) {
         this.chatBomb();
       }
     }
+  }, {
+    key: 'updateTimer',
+    value: function updateTimer(time) {
+      this.setState({ timer: time });
+    }
 
     // TEST FUNCTIONS
 
@@ -12990,7 +12997,9 @@ var App = function (_Component) {
           sendLive: this.sendLive,
           liveChat: this.state.liveChat,
           live_messages: this.state.live_messages,
-          removeLiveMessage: this.removeLiveMessage
+          removeLiveMessage: this.removeLiveMessage,
+          updateTimer: this.updateTimer,
+          timer: this.state.timer
         })
       );
     }
@@ -13108,7 +13117,7 @@ var Body = function (_Component) {
       } else if (this.props.view == 'Requests') {
         view = _react2.default.createElement(_Requests2.default, null);
       } else if (this.props.view == 'Chat' && this.props.selectedFriend !== null) {
-        view = _react2.default.createElement(_Chat2.default, { selectedFriend: this.props.selectedFriend, sendMessage: this.props.sendMessage, conversationView: this.props.conversationView, sendLive: this.props.sendLive, liveChat: this.props.liveChat, live_messages: this.props.live_messages, removeLiveMessage: this.props.removeLiveMessage });
+        view = _react2.default.createElement(_Chat2.default, { selectedFriend: this.props.selectedFriend, sendMessage: this.props.sendMessage, conversationView: this.props.conversationView, sendLive: this.props.sendLive, liveChat: this.props.liveChat, live_messages: this.props.live_messages, removeLiveMessage: this.props.removeLiveMessage, updateTimer: this.props.updateTimer, timer: this.props.timer });
       } else {
         view = null;
       }
@@ -13184,19 +13193,11 @@ var Box = function (_Component) {
 
     var _this = _possibleConstructorReturn(this, (Box.__proto__ || Object.getPrototypeOf(Box)).call(this, props));
 
-    _this.state = {
-      timer: null
-    };
-    _this.updateTimer = _this.updateTimer.bind(_this);
+    _this.state = {};
     return _this;
   }
 
   _createClass(Box, [{
-    key: 'updateTimer',
-    value: function updateTimer(time) {
-      this.setState({ timer: time });
-    }
-  }, {
     key: 'render',
     value: function render() {
       var live = false;
@@ -13208,10 +13209,10 @@ var Box = function (_Component) {
         { className: 'chatbox' },
         _react2.default.createElement(_ChatHeader2.default, {
           selectedFriend: this.props.selectedFriend,
-          live: live,
           removeLiveMessage: this.props.removeLiveMessage,
-          timer: this.state.timer,
-          updateTimer: this.updateTimer
+          live: live,
+          updateTimer: this.props.updateTimer,
+          timer: this.props.timer
         }),
         _react2.default.createElement(_ChatBody2.default, {
           conversationView: this.props.conversationView
@@ -13286,7 +13287,9 @@ var Chat = function (_Component) {
           sendLive: this.props.sendLive,
           liveChat: this.props.liveChat,
           live_messages: this.props.live_messages,
-          removeLiveMessage: this.props.removeLiveMessage
+          removeLiveMessage: this.props.removeLiveMessage,
+          updateTimer: this.props.updateTimer,
+          timer: this.props.timer
         })
       );
     }
@@ -13419,17 +13422,17 @@ var ChatHeader = function (_Component) {
       var _ = this;
       _.props.updateTimer(30);
       var start = Date.now();
-      var diff = void 0;
+      var difference = void 0;
       var seconds = void 0;
       function timer() {
-        diff = 30 - ((Date.now() - start) / 1000 | 0);
-        seconds = diff % 60 | 0;
+        difference = 30 - ((Date.now() - start) / 1000 | 0);
+        seconds = difference % 60 | 0;
         seconds = seconds < 10 ? "0" + seconds : seconds;
         _.props.updateTimer(seconds);
         if (seconds == 0) {
           _.props.removeLiveMessage(true);
         }
-        if (diff <= 0) {
+        if (difference <= 0) {
           start = Date.now() + 1000;
         }
       };

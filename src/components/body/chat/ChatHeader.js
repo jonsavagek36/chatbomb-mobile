@@ -19,17 +19,17 @@ class ChatHeader extends Component {
     let _ = this;
     _.props.updateTimer(30);
     let start = Date.now();
-    let diff;
+    let difference;
     let seconds;
     function timer() {
-      diff = 30 - (((Date.now() - start) / 1000) | 0);
-      seconds = (diff % 60) | 0;
+      difference = 30 - (((Date.now() - start) / 1000) | 0);
+      seconds = (difference % 60) | 0;
       seconds = seconds < 10 ? "0" + seconds : seconds;
       _.props.updateTimer(seconds);
       if (seconds == 0) {
         _.props.removeLiveMessage(true);
       }
-      if (diff <= 0) {
+      if (difference <= 0) {
         start = Date.now() + 1000;
       }
     };
