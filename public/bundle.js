@@ -13748,9 +13748,16 @@ var Header = function (_Component) {
       return _react2.default.createElement(
         'div',
         { id: 'friendsheader' },
-        this.props.profile.screen_name,
-        'points: ',
-        this.props.profile.points
+        _react2.default.createElement(
+          'div',
+          { id: 'screenname' },
+          this.props.profile.screen_name
+        ),
+        _react2.default.createElement(
+          'div',
+          { id: 'userpoints' },
+          this.props.profile.points
+        )
       );
     }
   }]);
@@ -14659,6 +14666,11 @@ var Topbar = function (_Component) {
         _react2.default.createElement(
           'div',
           { className: 'bar5' },
+          _react2.default.createElement(
+            'div',
+            { id: 'titlething' },
+            'Chatbomb'
+          ),
           _react2.default.createElement(_ButtonGroup2.default, {
             changeView: this.props.changeView
           })

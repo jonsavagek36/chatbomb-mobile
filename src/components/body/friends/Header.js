@@ -9,8 +9,12 @@ class Header extends Component {
   render() {
     return (
       <div id='friendsheader'>
-        {this.props.profile.screen_name}
-        points: {this.props.profile.points}
+        <div id='screenname'>
+          {this.props.profile.screen_name}
+        </div>
+        <div id='userpoints'>
+          {this.props.profile.points}
+        </div>
       </div>
     );
   }
