@@ -18,7 +18,17 @@ class Body extends Component {
     } else if (this.props.view == 'Requests') {
       view = <Requests />;
     } else if (this.props.view == 'Chat' && this.props.selectedFriend !== null) {
-      view = <Chat selectedFriend={this.props.selectedFriend} sendMessage={this.props.sendMessage} conversationView={this.props.conversationView} sendLive={this.props.sendLive} liveChat={this.props.liveChat} live_messages={this.props.live_messages} removeLiveMessage={this.props.removeLiveMessage} />;
+      view = <Chat selectedFriend={this.props.selectedFriend}
+                    sendMessage={this.props.sendMessage}
+                    conversationView={this.props.conversationView}
+                    sendLive={this.props.sendLive}
+                    liveChat={this.props.liveChat}
+                    live_messages={this.props.live_messages}
+                    removeLiveMessage={this.props.removeLiveMessage}
+                    updateTimer={this.props.updateTimer}
+                    timer={this.props.timer}
+                    extendTimer={this.props.extendTimer}
+                    nukeChat={this.props.nukeChat} />;
     } else {
       view = null;
     }

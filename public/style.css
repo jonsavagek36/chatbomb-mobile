@@ -23,6 +23,7 @@ body {
   width: 25%;
   height: auto;
   margin: 0px;
+  cursor: pointer;
 }
 .watchicon {
   position: relative;
@@ -30,6 +31,7 @@ body {
   height: auto;
   margin: 0px;
   top: 2px;
+  cursor: pointer;
 }
 
 #topbar {
@@ -214,24 +216,25 @@ button {
   border: #000000 solid 1px;
   display: flex;
   flex-direction: row;
-  justify-content: flex-start;
-  align-items: flex-start;
+  justify-content: center;
+  align-items: center;
 }
 .chatname {
   position: relative;
-  width: 40%;
+  width: 45%;
   top: 10px;
   left: 10px;
 }
 .chatbtns {
   position: relative;
   width: 40%;
-  top: 5px;
+  top: 0px;
+  left: 60px;
 }
 .chattimer {
   position: relative;
-  width: 20%;
-  top: 5px;
+  width: 15%;
+  top: 0px;
 }
 .chatbody {
   position: relative;

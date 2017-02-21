@@ -15,21 +15,21 @@ class ChatHeader extends Component {
     }
   }
 
-  startTimer() {
+  startTimer() { 
     let _ = this;
     _.props.updateTimer(30);
     let start = Date.now();
-    let diff;
+    let difference;
     let seconds;
     function timer() {
-      diff = 30 - (((Date.now() - start) / 1000) | 0);
-      seconds = (diff % 60) | 0;
+      difference = 30 - (((Date.now() - start) / 1000) | 0);
+      seconds = (difference % 60) | 0;
       seconds = seconds < 10 ? "0" + seconds : seconds;
       _.props.updateTimer(seconds);
       if (seconds == 0) {
         _.props.removeLiveMessage(true);
       }
-      if (diff <= 0) {
+      if (difference <= 0) {
         start = Date.now() + 1000;
       }
     };
@@ -56,8 +56,8 @@ class ChatHeader extends Component {
           {time}
         </div>
         <div className='chatbtns'>
-          <img src={'http://img.freepik.com/icones-gratuites/chronometre_318-138757.jpg?size=338&ext=jpg'} className='watchicon' />
-          <img src={'https://www.iconexperience.com/_img/o_collection_png/green_dark_grey/512x512/plain/bomb.png'} className='bombicon' />
+          <img src={'http://img.freepik.com/icones-gratuites/chronometre_318-138757.jpg?size=338&ext=jpg'} className='watchicon' onClick={this.props.extendTimer} />
+          <img src={'https://www.iconexperience.com/_img/o_collection_png/green_dark_grey/512x512/plain/bomb.png'} className='bombicon' onClick={this.props.nukeChat} />
         </div>
       </div>
     );

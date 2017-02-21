@@ -8,14 +8,7 @@ import SendText from './SendText';
 class Box extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      timer: null
-    };
-    this.updateTimer = this.updateTimer.bind(this);
-  }
-
-  updateTimer(time) {
-    this.setState({ timer: time });
+    this.state = {};
   }
 
   render() {
@@ -27,10 +20,12 @@ class Box extends Component {
       <div className='chatbox'>
         <ChatHeader
           selectedFriend={this.props.selectedFriend}
-          live={live}
           removeLiveMessage={this.props.removeLiveMessage}
-          timer={this.state.timer}
-          updateTimer={this.updateTimer}
+          live={live}
+          updateTimer={this.props.updateTimer}
+          timer={this.props.timer}
+          extendTimer={this.props.extendTimer}
+          nukeChat={this.props.nukeChat}
             />
         <ChatBody
           conversationView={this.props.conversationView}

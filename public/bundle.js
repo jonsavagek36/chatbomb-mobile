@@ -12748,12 +12748,16 @@ var App = function (_Component) {
       selectedFriend: {},
       conversations: {},
       liveChat: '',
-      live_messages: []
+      live_messages: [],
+      timer: null
     };
     // REACT BINDS
     _this.changeView = _this.changeView.bind(_this);
     _this.selectFriend = _this.selectFriend.bind(_this);
     _this.removeLiveMessage = _this.removeLiveMessage.bind(_this);
+    _this.updateTimer = _this.updateTimer.bind(_this);
+    _this.extendTimer = _this.extendTimer.bind(_this);
+    _this.nukeChat = _this.nukeChat.bind(_this);
     // SOCKET BINDS
     _this.chatInit = _this.chatInit.bind(_this);
     _this.refreshRequest = _this.refreshRequest.bind(_this);
@@ -12930,6 +12934,35 @@ var App = function (_Component) {
         this.chatBomb();
       }
     }
+  }, {
+    key: 'updateTimer',
+    value: function updateTimer(time) {
+      this.setState({ timer: time });
+    }
+  }, {
+    key: 'extendTimer',
+    value: function extendTimer() {
+      if (this.state.live_messages.indexOf(this.state.selectedFriend.id) > -1 && this.state.timer < 45) {
+        if (this.state.profile.points >= 5) {
+          var upProfile = this.state.profile;
+          upProfile.points -= 5;
+          this.setState({
+            timer: this.state.timer + 15,
+            profile: upProfile
+          });
+        }
+      }
+    }
+  }, {
+    key: 'nukeChat',
+    value: function nukeChat() {
+      if (this.state.profile.points >= 20) {
+        var upProfile = this.state.profile;
+        upProfile.points -= 20;
+        this.setState({ profile: upProfile });
+        this.chatBomb();
+      }
+    }
 
     // TEST FUNCTIONS
 
@@ -12990,7 +13023,11 @@ var App = function (_Component) {
           sendLive: this.sendLive,
           liveChat: this.state.liveChat,
           live_messages: this.state.live_messages,
-          removeLiveMessage: this.removeLiveMessage
+          removeLiveMessage: this.removeLiveMessage,
+          updateTimer: this.updateTimer,
+          timer: this.state.timer,
+          extendTimer: this.extendTimer,
+          nukeChat: this.nukeChat
         })
       );
     }
@@ -13108,7 +13145,17 @@ var Body = function (_Component) {
       } else if (this.props.view == 'Requests') {
         view = _react2.default.createElement(_Requests2.default, null);
       } else if (this.props.view == 'Chat' && this.props.selectedFriend !== null) {
-        view = _react2.default.createElement(_Chat2.default, { selectedFriend: this.props.selectedFriend, sendMessage: this.props.sendMessage, conversationView: this.props.conversationView, sendLive: this.props.sendLive, liveChat: this.props.liveChat, live_messages: this.props.live_messages, removeLiveMessage: this.props.removeLiveMessage });
+        view = _react2.default.createElement(_Chat2.default, { selectedFriend: this.props.selectedFriend,
+          sendMessage: this.props.sendMessage,
+          conversationView: this.props.conversationView,
+          sendLive: this.props.sendLive,
+          liveChat: this.props.liveChat,
+          live_messages: this.props.live_messages,
+          removeLiveMessage: this.props.removeLiveMessage,
+          updateTimer: this.props.updateTimer,
+          timer: this.props.timer,
+          extendTimer: this.props.extendTimer,
+          nukeChat: this.props.nukeChat });
       } else {
         view = null;
       }
@@ -13184,19 +13231,11 @@ var Box = function (_Component) {
 
     var _this = _possibleConstructorReturn(this, (Box.__proto__ || Object.getPrototypeOf(Box)).call(this, props));
 
-    _this.state = {
-      timer: null
-    };
-    _this.updateTimer = _this.updateTimer.bind(_this);
+    _this.state = {};
     return _this;
   }
 
   _createClass(Box, [{
-    key: 'updateTimer',
-    value: function updateTimer(time) {
-      this.setState({ timer: time });
-    }
-  }, {
     key: 'render',
     value: function render() {
       var live = false;
@@ -13208,10 +13247,12 @@ var Box = function (_Component) {
         { className: 'chatbox' },
         _react2.default.createElement(_ChatHeader2.default, {
           selectedFriend: this.props.selectedFriend,
-          live: live,
           removeLiveMessage: this.props.removeLiveMessage,
-          timer: this.state.timer,
-          updateTimer: this.updateTimer
+          live: live,
+          updateTimer: this.props.updateTimer,
+          timer: this.props.timer,
+          extendTimer: this.props.extendTimer,
+          nukeChat: this.props.nukeChat
         }),
         _react2.default.createElement(_ChatBody2.default, {
           conversationView: this.props.conversationView
@@ -13286,7 +13327,11 @@ var Chat = function (_Component) {
           sendLive: this.props.sendLive,
           liveChat: this.props.liveChat,
           live_messages: this.props.live_messages,
-          removeLiveMessage: this.props.removeLiveMessage
+          removeLiveMessage: this.props.removeLiveMessage,
+          updateTimer: this.props.updateTimer,
+          timer: this.props.timer,
+          extendTimer: this.props.extendTimer,
+          nukeChat: this.props.nukeChat
         })
       );
     }
@@ -13419,17 +13464,17 @@ var ChatHeader = function (_Component) {
       var _ = this;
       _.props.updateTimer(30);
       var start = Date.now();
-      var diff = void 0;
+      var difference = void 0;
       var seconds = void 0;
       function timer() {
-        diff = 30 - ((Date.now() - start) / 1000 | 0);
-        seconds = diff % 60 | 0;
+        difference = 30 - ((Date.now() - start) / 1000 | 0);
+        seconds = difference % 60 | 0;
         seconds = seconds < 10 ? "0" + seconds : seconds;
         _.props.updateTimer(seconds);
         if (seconds == 0) {
           _.props.removeLiveMessage(true);
         }
-        if (diff <= 0) {
+        if (difference <= 0) {
           start = Date.now() + 1000;
         }
       };
@@ -13465,8 +13510,8 @@ var ChatHeader = function (_Component) {
         _react2.default.createElement(
           'div',
           { className: 'chatbtns' },
-          _react2.default.createElement('img', { src: 'http://img.freepik.com/icones-gratuites/chronometre_318-138757.jpg?size=338&ext=jpg', className: 'watchicon' }),
-          _react2.default.createElement('img', { src: 'https://www.iconexperience.com/_img/o_collection_png/green_dark_grey/512x512/plain/bomb.png', className: 'bombicon' })
+          _react2.default.createElement('img', { src: 'http://img.freepik.com/icones-gratuites/chronometre_318-138757.jpg?size=338&ext=jpg', className: 'watchicon', onClick: this.props.extendTimer }),
+          _react2.default.createElement('img', { src: 'https://www.iconexperience.com/_img/o_collection_png/green_dark_grey/512x512/plain/bomb.png', className: 'bombicon', onClick: this.props.nukeChat })
         )
       );
     }
