@@ -1,6 +1,6 @@
 # chatbomb2
 
-Revamped version of Chatbomb that utilizes REMS (ReactJS, Express, MongoDB, and Socket.io)
+Revamped version of Chatbomb using REMS (ReactJS, Express, MongoDB, and Socket.io)
 
 Still in progress, but what I'm currently implementing:
 <ul>
