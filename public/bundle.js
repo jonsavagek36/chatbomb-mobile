@@ -12942,15 +12942,13 @@ var App = function (_Component) {
   }, {
     key: 'extendTimer',
     value: function extendTimer() {
-      if (this.state.live_messages.indexOf(this.state.selectedFriend.id) > -1 && this.state.timer < 45) {
-        if (this.state.profile.points >= 5) {
-          var upProfile = this.state.profile;
-          upProfile.points -= 5;
-          this.setState({
-            timer: this.state.timer + 15,
-            profile: upProfile
-          });
-        }
+      if (this.state.live_messages.indexOf(this.state.selectedFriend.id) > -1 && this.state.timer < 45 && this.state.profile.points >= 5) {
+        var upProfile = this.state.profile;
+        upProfile.points -= 5;
+        this.setState({ profile: upProfile });
+        return true;
+      } else {
+        return false;
       }
     }
   }, {
@@ -13453,21 +13451,21 @@ var ChatHeader = function (_Component) {
     key: 'componentWillReceiveProps',
     value: function componentWillReceiveProps(nextProps) {
       if (nextProps.live && nextProps.timer == null) {
-        this.startTimer();
+        this.startTimer(30);
       } else if (this.props.live && nextProps.live == false) {
         this.stopTimer();
       }
     }
   }, {
     key: 'startTimer',
-    value: function startTimer() {
+    value: function startTimer(x) {
       var _ = this;
-      _.props.updateTimer(30);
+      _.props.updateTimer(x);
       var start = Date.now();
       var difference = void 0;
       var seconds = void 0;
       function timer() {
-        difference = 30 - ((Date.now() - start) / 1000 | 0);
+        difference = x - ((Date.now() - start) / 1000 | 0);
         seconds = difference % 60 | 0;
         seconds = seconds < 10 ? "0" + seconds : seconds;
         _.props.updateTimer(seconds);
@@ -13486,6 +13484,14 @@ var ChatHeader = function (_Component) {
     value: function stopTimer() {
       clearInterval(this.timerId);
       this.props.updateTimer(null);
+    }
+  }, {
+    key: 'extendTimer',
+    value: function extendTimer() {
+      if (this.props.extendTimer()) {
+        var time = this.props.timer + 15;
+        this.startTimer(time);
+      }
     }
   }, {
     key: 'render',
@@ -13510,7 +13516,7 @@ var ChatHeader = function (_Component) {
         _react2.default.createElement(
           'div',
           { className: 'chatbtns' },
-          _react2.default.createElement('img', { src: 'http://img.freepik.com/icones-gratuites/chronometre_318-138757.jpg?size=338&ext=jpg', className: 'watchicon', onClick: this.props.extendTimer }),
+          _react2.default.createElement('img', { src: 'http://img.freepik.com/icones-gratuites/chronometre_318-138757.jpg?size=338&ext=jpg', className: 'watchicon', onClick: this.extendTimer }),
           _react2.default.createElement('img', { src: 'https://www.iconexperience.com/_img/o_collection_png/green_dark_grey/512x512/plain/bomb.png', className: 'bombicon', onClick: this.props.nukeChat })
         )
       );
