@@ -196,15 +196,13 @@ class App extends Component {
   }
 
   extendTimer() {
-    if (this.state.live_messages.indexOf(this.state.selectedFriend.id) > -1 && this.state.timer < 45) {
-      if (this.state.profile.points >= 5) {
-        let upProfile = this.state.profile;
-        upProfile.points -= 5;
-        this.setState({
-          timer: this.state.timer + 15,
-          profile: upProfile
-        });
-      }
+    if (this.state.live_messages.indexOf(this.state.selectedFriend.id) > -1 && this.state.timer < 45 && this.state.profile.points >= 5) {
+      let upProfile = this.state.profile;
+      upProfile.points -= 5;
+      this.setState({ profile: upProfile });
+      return true;
+    } else {
+      return false;
     }
   }
 
